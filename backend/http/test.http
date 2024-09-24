@@ -1,0 +1,48 @@
+GET http://localhost:3000/ads
+
+###
+
+POST http://localhost:3000/ads 
+Content-Type: application/json
+
+{
+    "id": 3,
+    "title": "Bike to sell",
+    "description": "My bike is red, working fine.",
+    "owner": "sten@gmail.com",
+    "price": 50,
+    "picture": "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
+    "location": "Nantes",
+    "createdAt": "2023-09-05T10:13:14.755Z"
+}
+
+###
+
+### 
+
+PUT http://localhost:3000/ads
+Content-Type: application/json
+
+{
+    "id": 2,
+    "title": "Bike remplacé",
+    "description": "My bike is red, working fine.",
+    "owner": "toto@gmail.com",
+    "price": 2000,
+    "picture": "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
+    "location": "Nantes",
+    "createdAt": "2023-09-05T10:13:14.755Z"
+}
+
+### 
+
+PATCH http://localhost:3000/ads/3
+Content-Type: application/json
+
+{
+    "title": "Changement titre"
+}
+
+###
+
+DELETE http://localhost:3000/ads/3
