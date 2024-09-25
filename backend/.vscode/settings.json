@@ -1,20 +1,15 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode", // Définit Prettier comme le formateur de code par défaut.
-  "editor.formatOnSave": true, // Formate automatiquement le code à chaque sauvegarde.
-
-  // Lors de la sauvegarde d'un fichier, effectue toutes les corrections automatiques disponibles avec ESLint.
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-
-  // Désactive le formatage automatique à la sauvegarde pour les fichiers JavaScript.
-  // Cela permet à ESLint de prendre en charge le formatage et d'éviter les conflits potentiels avec Prettier.
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "eslint.validate": ["javascript", "typescript"],
   "[javascript]": {
-    "editor.formatOnSave": false
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
-
-  // Désactive le formatage automatique à la sauvegarde pour les fichiers TypeScript.
   "[typescript]": {
-    "editor.formatOnSave": false
-  }
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "eslint.format.enable": true
 }

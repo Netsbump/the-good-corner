@@ -1,4 +1,4 @@
-import { z } from "zod";
-import { AdSchema } from "../schemas/ad.schema";
+import type { z } from 'zod'
+import type { AdSchema } from '../schemas/ad.schema'
 
-export type Ad = z.infer<typeof AdSchema>;
+export type Ad = z.infer<typeof AdSchema>

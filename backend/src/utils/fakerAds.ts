@@ -1,19 +1,19 @@
-import { faker } from "@faker-js/faker";
-import { Ad } from "./types";
+import type { Ad } from './types'
+import { faker } from '@faker-js/faker'
 
-export const getFakeAds = (): Ad[] => {
-  const ads: Ad[] = [];
+export function getFakeAds(): Ad[] {
+  const ads: Ad[] = []
 
   for (let i = 0; i < 60; i++) {
     ads.push({
       title: faker.commerce.productName(),
       description: faker.lorem.sentence(),
-      price: parseFloat(faker.commerce.price()),
+      price: Number.parseFloat(faker.commerce.price()),
       owner: faker.person.firstName(),
       picture: faker.image.url(),
-      location: faker.helpers.arrayElement(["Paris", "Lyon", "Bordeaux"]),
-    });
+      location: faker.helpers.arrayElement(['Paris', 'Lyon', 'Bordeaux']),
+    })
   }
 
-  return ads;
-};
+  return ads
+}

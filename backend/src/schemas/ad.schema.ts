@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const AdSchema = z.object({
   title: z.string(),
@@ -7,7 +7,7 @@ export const AdSchema = z.object({
   owner: z.string(),
   picture: z.string(),
   location: z.string(),
-});
+})
 
 export const AdPatchSchema = AdSchema.pick({
   title: true,
@@ -16,4 +16,4 @@ export const AdPatchSchema = AdSchema.pick({
   owner: true,
   picture: true,
   location: true,
-}).partial();
+}).partial()
