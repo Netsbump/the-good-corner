@@ -13,23 +13,8 @@
     "editor.formatOnSave": false
   },
 
-  // Désactive le formatage automatique à la sauvegarde pour les fichiers JavaScript React.
-  "[javascriptreact]": {
-    "editor.formatOnSave": false
-  },
-
   // Désactive le formatage automatique à la sauvegarde pour les fichiers TypeScript.
   "[typescript]": {
     "editor.formatOnSave": false
-  },
-
-  // Désactive le formatage automatique à la sauvegarde pour les fichiers TypeScript React.
-  "[typescriptreact]": {
-    "editor.formatOnSave": false
-  },
-
-  // Traite tous les fichiers CSS comme du Tailwind CSS pour une meilleure autocomplétion et coloration syntaxique
-  "files.associations": {
-    "*.css": "tailwindcss"
   }
 }

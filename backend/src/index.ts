@@ -1,8 +1,7 @@
 import express from "express";
-//import { Ad } from "./utils/types";
-import { ads } from "./utils/constants";
 import { AdPatchSchema, AdSchema } from "./schemas/ad.schema";
 import { Ad } from "./utils/types";
+import { initializeDatabase } from "../db/dbSetup";
 
 const app = express();
 
@@ -10,11 +9,36 @@ app.use(express.json());
 
 const port = 3000;
 
+const db = initializeDatabase();
+
 app.get("/ads", (_, res) => {
   try {
-    return res.status(200).json({ ads });
+    db.all("SELECT * FROM Ads", (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to retrieve ads" });
+      }
+      return res.json(rows);
+    });
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/ads/:id", (req, res) => {
+  try {
+    const adId = req.params.id;
+
+    db.get(`SELECT * FROM Ads WHERE id = ?`, [adId], (err: Error | null, row) => {
+      if (err) {
+        return res.status(500).json({ error: err });
+      }
+      if (!row) {
+        return res.status(404).json({ error: `Ad with id: ${adId} not found` });
+      }
+      return res.json(row);
+    });
+  } catch (error) {
+    return res.status(500).json("Internal Server Error");
   }
 });
 
@@ -29,15 +53,30 @@ app.post("/ads", (req, res) => {
     }
 
     const newAd: Ad = result.data;
-    newAd.id = ads[ads.length - 1].id + 1;
-    ads.push(newAd);
-    return res.status(200).json({ id: newAd.id });
+
+    db.run(
+      `INSERT INTO Ads (title, description, price, owner, picture, location) VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        newAd.title,
+        newAd.description,
+        newAd.price,
+        newAd.owner,
+        newAd.picture,
+        newAd.location,
+      ],
+      function (err) {
+        if (err) {
+          return res.status(500).json("Failed to insert ad");
+        }
+        return res.json({ id: this.lastID });
+      },
+    );
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.put("/ads", (req, res) => {
+app.put("/ads/:id", (req, res) => {
   try {
     const result = AdSchema.safeParse(req.body);
 
@@ -48,23 +87,32 @@ app.put("/ads", (req, res) => {
     }
 
     const updatedAd: Ad = result.data;
+    const adId = req.params.id;
 
-    let adToEdit: Ad | undefined;
-    for (const ad of ads) {
-      if (ad.id === updatedAd.id) {
-        adToEdit = ad;
-        break;
-      }
-    }
+    db.run(
+      `UPDATE Ads SET title = ?, description = ?, price = ?, owner = ?, picture = ?, location = ? WHERE id = ?`,
+      [
+        updatedAd.title,
+        updatedAd.description,
+        updatedAd.price,
+        updatedAd.owner,
+        updatedAd.picture,
+        updatedAd.location,
+        adId,
+      ],
+      function (err) {
+        if (err) {
+          return res.status(500).json("Failed to update ad");
+        }
 
-    if (adToEdit) {
-      Object.assign(adToEdit, updatedAd);
-      return res.status(200).json({ id: updatedAd.id });
-    } else {
-      return res.status(400).json({
-        error: "Ad to update not found",
-      });
-    }
+        // Vérification du nombre de lignes modifiées
+        if (this.changes === 0) {
+          return res.status(404).json({ error: "Ad not found" });
+        }
+
+        return res.json({ id: adId });
+      },
+    );
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -84,22 +132,34 @@ app.patch("/ads/:id", (req, res) => {
     const updatedFields = result.data;
     const adId = Number(req.params.id);
 
-    let adToEdit: Ad | undefined;
-    for (const ad of ads) {
-      if (ad.id === adId) {
-        adToEdit = ad;
-        break;
-      }
-    }
+    // Génération dynamique de la requête SQL pour mettre à jour seulement les champs fournis
+    const fields = Object.keys(updatedFields)
+      .map((key) => `${key} = ?`)
+      .join(", ");
+    const values = Object.values(updatedFields);
 
-    if (adToEdit) {
-      Object.assign(adToEdit, updatedFields);
-      return res.status(200).json({ id: adToEdit.id });
-    } else {
-      return res.status(404).json({
-        error: "Ad to update not found",
+    if (fields.length === 0) {
+      return res.status(400).json({
+        error: "No valid fields provided for update",
       });
     }
+
+    db.run(
+      `UPDATE Ads SET ${fields} WHERE id = ?`,
+      [...values, adId],
+      function (err: Error | null) {
+        if (err) {
+          return res.status(500).json("Failed to update ad");
+        }
+
+        // Vérification du nombre de lignes modifiées
+        if (this.changes === 0) {
+          return res.status(404).json({ error: "Ad not found" });
+        }
+
+        return res.json({ id: adId });
+      },
+    );
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -107,27 +167,48 @@ app.patch("/ads/:id", (req, res) => {
 
 app.delete("/ads/:id", (req, res) => {
   try {
-    const id = Number(req.params.id);
+    const adId = Number(req.params.id);
 
-    if (isNaN(id)) {
+    if (isNaN(adId)) {
       return res.status(400).json({ error: "Invalid ID format" });
     }
 
-    let adFound = false;
-
-    for (let i = 0; i < ads.length; i++) {
-      if (ads[i].id === id) {
-        ads.splice(i, 1);
-        adFound = true;
-        break;
+    db.run("DELETE FROM Ads WHERE id = ?", [adId], function (err) {
+      if (err) {
+        return res.status(500).json({ error: "Failed to delete ad" });
       }
-    }
 
-    if (!adFound) {
-      return res.status(404).json({ error: "Ad not found" });
-    }
+      // Vérifier si une ligne a été supprimée
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Ad not found" });
+      }
 
-    return res.status(200).json({ id: id });
+      return res.status(200).json({ message: "Ad deleted", id: adId });
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.delete("/ads", (_, res) => {
+  try {
+    // Supprimer toutes les annonces
+    db.run("DELETE FROM Ads", (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to delete ads" });
+      }
+
+      // Réinitialiser la séquence d'auto-incrémentation
+      db.run("DELETE FROM sqlite_sequence WHERE name = 'Ads'", (err) => {
+        if (err) {
+          return res.status(500).json({ error: "Failed to reset ID sequence" });
+        }
+
+        return res
+          .status(200)
+          .json({ message: "All ads deleted and ID sequence reset" });
+      });
+    });
   } catch (error) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
