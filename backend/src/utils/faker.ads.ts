@@ -1,8 +1,9 @@
-import type { Ad } from './types'
+import type { AdType } from './types'
 import { faker } from '@faker-js/faker'
+import { BORDEAUX, LYON, PARIS } from './constants'
 
-export function getFakeAds(): Ad[] {
-  const ads: Ad[] = []
+export function getFakeAds(): AdType[] {
+  const ads: AdType[] = []
 
   for (let i = 0; i < 60; i++) {
     ads.push({
@@ -11,7 +12,8 @@ export function getFakeAds(): Ad[] {
       price: Number.parseFloat(faker.commerce.price()),
       owner: faker.person.firstName(),
       picture: faker.image.url(),
-      location: faker.helpers.arrayElement(['Paris', 'Lyon', 'Bordeaux']),
+      location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
+      category_id: faker.helpers.arrayElement([1, 2, 3]),
     })
   }
 
