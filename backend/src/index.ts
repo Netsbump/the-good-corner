@@ -3,6 +3,7 @@ import { initializeApp } from './app'
 import { dataSource } from './datasource'
 import { seedAds } from './seeders/ads.seeder'
 import { seedCategories } from './seeders/categories.seeder'
+import { seedTags } from './seeders/tags.seeder'
 import 'reflect-metadata'
 
 const port = 3000
@@ -13,7 +14,8 @@ async function bootstrap() {
     await dataSource.initialize()
     console.warn('DataSource has been initialized')
 
-    // Seed Database
+    // Seeds Database
+    await seedTags()
     await seedCategories()
     await seedAds()
 

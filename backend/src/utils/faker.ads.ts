@@ -13,7 +13,8 @@ export function getFakeAds(): AdType[] {
       owner: faker.person.firstName(),
       picture: faker.image.url(),
       location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
-      category_id: faker.helpers.arrayElement([1, 2, 3]),
+      category: faker.helpers.arrayElement([1, 2, 3]),
+      tags: faker.helpers.arrayElement([1, 2, 3]),
     })
   }
 

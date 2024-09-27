@@ -1,10 +1,12 @@
 import type { Request, Response } from 'express'
+import type { AdService } from '../services/ad.service'
 import type { AdType } from '../utils/types'
 import { AdIdSchema, AdPatchSchema, AdSchema, querySchema } from '../schemas/ad.schema'
-import { AdService } from '../services/ad.service'
 
 export class AdController {
-  static async getAll(req: Request, res: Response) {
+  constructor(private readonly adsService: AdService) {}
+
+  public async getAll(req: Request, res: Response) {
     try {
       // 1. Vérification
       const parseResult = querySchema.safeParse(req.query)
@@ -15,7 +17,7 @@ export class AdController {
 
       const categoryIds = parseResult.data.category_ids
 
-      const ads = await AdService.getAll(categoryIds)
+      const ads = await this.adsService.getAll(categoryIds)
 
       return res.status(200).json(ads)
     }
@@ -24,7 +26,7 @@ export class AdController {
     }
   }
 
-  static async getById(req: Request, res: Response) {
+  public async getById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
       const parseAdId = AdIdSchema.safeParse(id)
@@ -33,7 +35,7 @@ export class AdController {
         return res.status(400).json({ error: 'Invalid ID format' })
       }
 
-      const ad = await AdService.getById(parseAdId.data)
+      const ad = await this.adsService.getById(parseAdId.data)
 
       if (!ad) {
         return res.status(500).json('Ad not found')
@@ -46,7 +48,7 @@ export class AdController {
     }
   }
 
-  static async create(req: Request, res: Response) {
+  public async create(req: Request, res: Response) {
     try {
       const parseAd = AdSchema.safeParse(req.body)
 
@@ -58,15 +60,15 @@ export class AdController {
 
       const newAd: AdType = parseAd.data
 
-      const createdAd = await AdService.create(newAd)
+      const createdAd = await this.adsService.create(newAd)
       return res.status(201).json(createdAd)
     }
     catch (error) {
-      return res.status(500).json({ error: `Failed to update ad: ${error instanceof Error ? error.message : 'Unknown error'}` })
+      return res.status(500).json({ error: `Failed to create ad: ${error instanceof Error ? error.message : 'Unknown error'}` })
     }
   }
 
-  static async update(req: Request, res: Response) {
+  public async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
       const parseUpdateAdId = AdIdSchema.safeParse(id)
@@ -86,18 +88,18 @@ export class AdController {
       const updateAd: AdType = parseAd.data
       const updateAdId = parseUpdateAdId.data
 
-      const updatedAd = await AdService.update(updateAdId, updateAd)
+      const updatedAd = await this.adsService.update(updateAdId, updateAd)
       if (!updatedAd) {
         return res.status(404).json({ error: 'Ad not found' })
       }
-      return res.status(200).json(updatedAd) // 200 OK pour une mise à jour réussie
+      return res.status(200).json(updatedAd)
     }
     catch (error) {
       return res.status(500).json({ error: `Failed to update ad: ${error instanceof Error ? error.message : 'Unknown error'}` })
     }
   }
 
-  static async partialUpdate(req: Request, res: Response) {
+  public async partialUpdate(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
       const parseUpdateAdId = AdIdSchema.safeParse(id)
@@ -117,7 +119,7 @@ export class AdController {
       const updateFields: Partial<AdType> = parsePartialAd.data
       const adId = parseUpdateAdId.data
 
-      const updatedAd = await AdService.partialUpdate(adId, updateFields)
+      const updatedAd = await this.adsService.partialUpdate(adId, updateFields)
       if (!updatedAd) {
         return res.status(404).json({ error: 'Ad not found' })
       }
@@ -128,7 +130,7 @@ export class AdController {
     }
   }
 
-  static async deleteById(req: Request, res: Response) {
+  public async deleteById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
       const parseAdId = AdIdSchema.safeParse(id)
@@ -137,7 +139,7 @@ export class AdController {
         return res.status(400).json({ error: 'Invalid ID format' })
       }
 
-      const deletedAd = await AdService.deleteById(parseAdId.data)
+      const deletedAd = await this.adsService.deleteById(parseAdId.data)
       if (!deletedAd) {
         return res.status(404).json({ error: 'Ad not found' })
       }
@@ -149,9 +151,9 @@ export class AdController {
     }
   }
 
-  static async deleteAll(req: Request, res: Response) {
+  public async deleteAll(req: Request, res: Response) {
     try {
-      await AdService.deleteAll()
+      await this.adsService.deleteAll()
       return res.status(200).json({ message: 'All ads deleted' })
     }
     catch (error) {

@@ -1,31 +1,31 @@
-import type { SafeParseReturnType } from 'zod'
+import type { Repository } from 'typeorm'
+import type { Ad } from '../entities/ad.entity'
+import type { Category } from '../entities/category.entity'
 import type { AdType } from '../utils/types'
 import { In } from 'typeorm'
-import { Ad } from '../entities/ad.entity'
-import { Category } from '../entities/category.entity'
 
 export class AdService {
-  static async getAll(categoryIds?: string) {
+  constructor(private readonly adsRepository: Repository<Ad>, private readonly categoryRepository: Repository<Category>) {}
+
+  public async getAll(categoryIds?: string) {
     try {
       if (categoryIds) {
         const categoryIdArray = categoryIds.split(',').map(id => Number.parseInt(id.trim(), 10))
-        console.warn(categoryIdArray)
+
         if (categoryIdArray.some(Number.isNaN)) {
           throw new Error('Invalid category ID format')
         }
 
-        // Utilisation de TypeORM pour filtrer sur les catégories spécifiées
-        return await Ad.find({
+        return await this.adsRepository.find({
           where: { category: { id: In(categoryIdArray) } }, // La clé doit être la propriété "id" de Category
-          relations: ['category'], // Ajoutez cette ligne si vous voulez inclure les données de la catégorie dans la réponse
+          relations: ['category', 'tags'],
           order: { category: { id: 'ASC' } }, // Tri par ID de la catégorie
         })
       }
       else {
       // Récupérer toutes les annonces si aucun category_id n'est spécifié
-        return await Ad.find({
-          relations: ['category'], // Ajoutez cette ligne si vous voulez inclure les données de la catégorie dans la réponse
-          order: { category: { id: 'ASC' } },
+        return await this.adsRepository.find({
+          relations: ['category', 'tags'],
         })
       }
     }
@@ -34,24 +34,26 @@ export class AdService {
     }
   }
 
-  static async getById(id: number): Promise<Ad | null> {
-    console.warn(id)
-    const ad = await Ad.findOneBy({ id })
+  public async getById(id: number): Promise<Ad | null> {
+    const ad = await this.adsRepository.findOne({
+      where: { id },
+      relations: ['category'],
+    })
     return ad || null
   }
 
-  static async create(ad: AdType): Promise<Ad> {
+  public async create(ad: AdType): Promise<Ad> {
     try {
-      const newAd = new Ad()
+      const newAd = this.adsRepository.create()
       newAd.title = ad.title
       newAd.description = ad.description
       newAd.price = ad.price
       newAd.owner = ad.owner
       newAd.picture = ad.picture
       newAd.location = ad.location
-      newAd.category = await Category.findOneByOrFail({ id: ad.category_id })
+      newAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
 
-      await newAd.save()
+      await this.adsRepository.save(newAd)
 
       return newAd
     }
@@ -60,9 +62,9 @@ export class AdService {
     }
   }
 
-  static async update(id: number, ad: AdType): Promise<Ad | null> {
+  public async update(id: number, ad: AdType): Promise<Ad | null> {
     try {
-      const updateAd = await this.getById(id)
+      const updateAd = await this.adsRepository.findOneBy({ id })
 
       if (!updateAd) {
         return null
@@ -74,9 +76,9 @@ export class AdService {
       updateAd.owner = ad.owner
       updateAd.picture = ad.picture
       updateAd.location = ad.location
-      updateAd.category = await Category.findOneByOrFail({ id: ad.category_id })
+      updateAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
 
-      await updateAd.save()
+      await this.adsRepository.save(updateAd)
 
       return updateAd
     }
@@ -85,32 +87,32 @@ export class AdService {
     }
   }
 
-  static async partialUpdate(id: number, ad: Partial<AdType>): Promise<Ad | null> {
+  public async partialUpdate(id: number, ad: Partial<AdType>): Promise<Ad | null> {
     try {
-      const adToUpdate = await Ad.findOneBy({ id })
+      const adToUpdate = await this.adsRepository.findOneBy({ id })
 
       if (!adToUpdate) {
         return null
       }
 
-      if (ad.category_id) {
-        adToUpdate.category = await Category.findOneByOrFail({ id: ad.category_id })
+      if (ad.category) {
+        adToUpdate.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
       }
 
       Object.assign(adToUpdate, ad)
 
-      const updatedAd = await adToUpdate.save()
+      await this.adsRepository.save(adToUpdate)
 
-      return updatedAd
+      return adToUpdate
     }
     catch (error) {
       throw new Error(`Failed to update ad: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
-  static async deleteById(id: number): Promise<boolean> {
+  public async deleteById(id: number): Promise<boolean> {
     try {
-      const result = await Ad.delete(id)
+      const result = await this.adsRepository.delete(id)
       return result.affected !== 0 // Retourne true si une annonce a été supprimée
     }
     catch (error) {
@@ -118,9 +120,9 @@ export class AdService {
     }
   }
 
-  static async deleteAll(): Promise<void> {
+  public async deleteAll(): Promise<void> {
     try {
-      await Ad.clear()
+      await this.adsRepository.clear()
     }
     catch (error) {
       throw new Error(`Failed to delete all ads: ${error instanceof Error ? error.message : error}`)

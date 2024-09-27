@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { BORDEAUX, LYON, PARIS } from '../utils/constants'
 
 const categoryIdSchema = z.number().int().positive()
+const tagsIdSchema = z.number().int().positive()
 
 export const AdSchema = z.object({
   title: z.string(),
@@ -10,7 +11,8 @@ export const AdSchema = z.object({
   owner: z.string(),
   picture: z.string(),
   location: z.enum([PARIS, BORDEAUX, LYON]),
-  category_id: categoryIdSchema,
+  category: categoryIdSchema,
+  tags: tagsIdSchema,
 })
 
 export const AdPatchSchema = AdSchema.pick({
@@ -20,7 +22,8 @@ export const AdPatchSchema = AdSchema.pick({
   owner: true,
   picture: true,
   location: true,
-  category_id: true,
+  category: true,
+  tags: true,
 }).partial()
 
 export const querySchema = z.object({

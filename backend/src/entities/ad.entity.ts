@@ -1,5 +1,6 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { Category } from './category.entity'
+import { Tag } from './tag.entity'
 
 @Entity()
 export class Ad extends BaseEntity {
@@ -24,8 +25,12 @@ export class Ad extends BaseEntity {
   @Column({ type: 'text' })
   location!: string
 
-  @ManyToOne(() => Category, { nullable: false }) // Définir la relation correctement
-  category!: Category // Utilisez directement l'entité Category
+  @ManyToOne(() => Category, category => category.ads, { nullable: false })
+  category!: Category
+
+  @ManyToMany(() => Tag, tag => tag.ads)
+  @JoinTable()
+  tags!: Tag[]
 
   @CreateDateColumn({ type: 'text', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: string

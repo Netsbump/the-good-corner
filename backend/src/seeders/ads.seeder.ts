@@ -1,11 +1,13 @@
 import { dataSource } from '../datasource'
 import { Ad } from '../entities/ad.entity'
 import { Category } from '../entities/category.entity'
+import { Tag } from '../entities/tag.entity'
 import { getFakeAds } from '../utils/faker.ads'
 
 export async function seedAds() {
   const adRepository = dataSource.getRepository(Ad)
   const categoryRepository = dataSource.getRepository(Category)
+  const tagRepository = dataSource.getRepository(Tag)
 
   // Vérifier s'il y a déjà des annonces dans la base de données
   const adCount = await adRepository.count()
@@ -21,6 +23,12 @@ export async function seedAds() {
     categoryMap.set(category.id, category)
   })
 
+  const tags = await tagRepository.find()
+  const tagMap = new Map<number, Tag>()
+  tags.forEach((tag) => {
+    tagMap.set(tag.id, tag)
+  })
+
   // Insérer les annonces factices
   const fakeAds = getFakeAds()
   const ads = fakeAds.map((adData) => {
@@ -33,11 +41,18 @@ export async function seedAds() {
     ad.location = adData.location
 
     // Trouver la catégorie correspondante et l'associer à l'annonce
-    const category = categoryMap.get(adData.category_id)
+    const category = categoryMap.get(adData.category)
     if (!category) {
-      throw new Error(`Category with ID ${adData.category_id} not found`)
+      throw new Error(`Category with ID ${adData.category} not found`)
     }
     ad.category = category
+
+    // Trouver la catégorie correspondante et l'associer à l'annonce
+    const tag = tagMap.get(adData.tags)
+    if (!tag) {
+      throw new Error(`Tag with ID ${adData.tags} not found`)
+    }
+    ad.tags = [tag]
 
     return ad
   })

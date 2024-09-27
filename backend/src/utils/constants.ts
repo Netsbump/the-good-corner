@@ -10,7 +10,8 @@ export const ads: AdType[] = [
     picture:
       'https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000',
     location: 'Paris',
-    category_id: 1,
+    category: 1,
+    tags: 1,
   },
   {
     title: 'Car to sell',
@@ -21,7 +22,8 @@ export const ads: AdType[] = [
     picture:
       'https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg',
     location: 'Paris',
-    category_id: 1,
+    category: 1,
+    tags: 1,
   },
 ]
 
