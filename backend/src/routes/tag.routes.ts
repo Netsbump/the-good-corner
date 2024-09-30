@@ -12,5 +12,8 @@ const tagController = new TagController(tagService)
 const router = Router()
 
 router.get('/tags', tagController.getAll.bind(tagController))
+router.post('/tags', tagController.create.bind(tagController))
+router.put('/tags/:id', tagController.update.bind(tagController))
+router.delete('/tags/:id', tagController.deleteById.bind(tagController))
 
 export default router

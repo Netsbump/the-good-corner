@@ -1,1 +1,23 @@
 GET http://localhost:3000/api/tags
+
+###
+
+POST http://localhost:3000/api/tags
+Content-Type: application/json
+
+{
+    "name": "Eté"
+}
+
+### 
+
+PUT http://localhost:3000/api/tags/3
+Content-Type: application/json
+
+{
+    "name": "Automne"
+}
+
+###
+
+DELETE http://localhost:3000/api/tags/4
