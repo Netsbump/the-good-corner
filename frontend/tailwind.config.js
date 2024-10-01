@@ -7,6 +7,21 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'system-ui',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"Segoe UI"',
+          'Roboto',
+          'Oxygen',
+          'Ubuntu',
+          'Cantarell',
+          '"Open Sans"',
+          '"Helvetica Neue"',
+          'sans-serif',
+        ],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -56,5 +71,27 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({ addBase }) {
+      addBase({
+        button: {
+          minWidth: '40px',
+          height: '40px',
+          padding: '8px',
+          borderRadius: '8px',
+          border: '2px solid #ffa41b',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '3px',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          color: '#ffa41b',
+          backgroundColor: 'white',
+          cursor: 'pointer',
+        },
+      })
+    },
+  ],
 }

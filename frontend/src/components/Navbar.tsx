@@ -1,43 +1,45 @@
+import { Link } from '@tanstack/react-router'
+
 export function Navbar() {
   return (
     <nav className="categories-navigation">
-      <a href="" className="category-navigation-link">Ameublement</a>
+      <Link to="/ameublement" className="category-navigation-link">Ameublement</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Électroménager</a>
+      <Link to="/electromenager" className="category-navigation-link">Électroménager</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Photographie</a>
+      <Link to="/photographie" className="category-navigation-link">Photographie</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Informatique</a>
+      <Link to="/informatique" className="category-navigation-link">Informatique</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Téléphonie </a>
+      <Link to="/telephonie" className="category-navigation-link">Téléphonie</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Vélos</a>
+      <Link to="/velos" className="category-navigation-link">Vélos</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Véhicules</a>
+      <Link to="/vehicules" className="category-navigation-link">Véhicules</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Sport</a>
+      <Link to="/sport" className="category-navigation-link">Sport</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Habillement</a>
+      <Link to="/habillement" className="category-navigation-link">Habillement</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Bébé</a>
+      <Link to="/bebe" className="category-navigation-link">Bébé</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Outillage</a>
+      <Link to="/outillage" className="category-navigation-link">Outillage</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Services </a>
+      <Link to="/services" className="category-navigation-link">Services</Link>
       {' '}
       •
-      <a href="" className="category-navigation-link">Vacances</a>
+      <Link to="/vacances" className="category-navigation-link">Vacances</Link>
     </nav>
   )
 }
