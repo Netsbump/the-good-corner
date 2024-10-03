@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from '@tanstack/react-router'
 import { AdFormSchema } from '@tgc/packages'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -15,11 +16,13 @@ export function AdForm() {
   const [categories, setCategories] = useState<CategoryDto[]>([])
   const [tags, setTags] = useState<TagDto[]>([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate({ from: '/ad/new' })
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof AdFormSchema>>({
     resolver: zodResolver(AdFormSchema),
     defaultValues: {
       title: '',
+      description: '',
       price: 0,
       owner: '',
       picture: '',
@@ -48,18 +51,21 @@ export function AdForm() {
 
   // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof AdFormSchema>) => {
-    console.warn(values)
+    try {
+      const parsedData = AdFormSchema.parse(values)
+      const preparedData = {
+        ...parsedData,
+        category: { id: Number(parsedData.category.id) },
+        tags: parsedData.tags?.map(tag => ({ id: tag.id })) || [],
+      }
 
-    const preparedData = {
-      ...values,
-      category: { id: Number(values.category.id) },
-      tags: values.tags?.map(tag => ({ id: tag.id })) || [], // Garde uniquement les ID des tags
+      await postAd(preparedData)
+
+      navigate({ to: '/', replace: true })
     }
-
-    console.warn(preparedData)
-
-    const result = await postAd(preparedData)
-    console.warn(result)
+    catch (error) {
+      console.error('Validation Error:', error)
+    }
   }
 
   // Si en cours de chargement, on affiche un message ou un spinner
@@ -86,6 +92,20 @@ export function AdForm() {
 
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <textarea placeholder="Description de l'annonce" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="price"
           render={({ field }) => (
             <FormItem>
@@ -95,7 +115,7 @@ export function AdForm() {
                   type="number"
                   placeholder="Prix"
                   {...field}
-                  onChange={e => field.onChange(Number(e.target.value))} // Conversion explicite en nombre
+                  onChange={e => field.onChange(Number(e.target.valueAsNumber))}
                 />
               </FormControl>
               <FormMessage />
@@ -124,7 +144,7 @@ export function AdForm() {
             <FormItem>
               <FormLabel>Image (URL)</FormLabel>
               <FormControl>
-                <input type="text" placeholder="URL de l'image" {...field} />
+                <input type="url" placeholder="URL de l'image" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -147,21 +167,22 @@ export function AdForm() {
 
         <FormField
           control={form.control}
-          name="category.id"
+          name="category"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Catégorie</FormLabel>
               <FormControl>
                 <select
-                  value={field.value}
-                  onChange={e => field.onChange(Number(e.target.value))} // Converti la valeur en nombre
+                  value={field.value.id}
+                  onChange={(e) => {
+                    const selectedCategory = categories.find(c => c.id === Number(e.target.value))
+                    field.onChange(selectedCategory || { id: 0, name: '' })
+                  }}
                 >
                   <option value="">Sélectionnez une catégorie</option>
                   {categories.map(category => (
                     <option key={category.id} value={category.id}>
                       {category.name}
-                      {' '}
-                      {/* Affiche le nom de la catégorie */}
                     </option>
                   ))}
                 </select>
@@ -186,11 +207,11 @@ export function AdForm() {
                     <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                       <FormControl>
                         <Checkbox
-                          checked={field.value?.some((t: TagDto) => t.id === tag.id)} // Vérifie si l'objet complet {id, name} est dans le tableau
+                          checked={field.value?.some(t => t.id === tag.id)}
                           onCheckedChange={(checked) => {
                             const updatedTags = checked
-                              ? [...field.value, { id: tag.id, name: tag.name }] // Ajouter l'objet complet {id, name}
-                              : field.value?.filter((t: TagDto) => t.id !== tag.id) // Retirer l'objet si la checkbox est décochée
+                              ? [...(field.value || []), { id: tag.id, name: tag.name }]
+                              : field.value?.filter(t => t.id !== tag.id) || []
                             field.onChange(updatedTags)
                           }}
                         />
@@ -210,142 +231,3 @@ export function AdForm() {
     </Form>
   )
 }
-
-// export function AdForm() {
-//   // Initialisation de React Hook Form avec le schéma Zod
-//   const form = useForm({
-//     resolver: zodResolver(adFormSchema),
-//     defaultValues: {
-//       title: '',
-//       price: 0,
-//       owner: '',
-//       picture: '',
-//       location: '',
-//       category: { id: 0, name: '' }, // Category initialisée
-//       tags: [], // Les tags initialisés à un tableau vide
-//     },
-//   })
-
-//   // Soumission du formulaire
-//   const onSubmit = (values: z.infer<typeof adFormSchema>) => {
-//     console.warn(values)
-//     // Logique d'envoi des données
-//   }
-
-//   return (
-//     <Form {...form}>
-//       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-//         <FormField
-//           control={form.control}
-//           name="title"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Titre</FormLabel>
-//               <FormControl>
-//                 <input type="text" placeholder="Titre de l'annonce" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="price"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Prix</FormLabel>
-//               <FormControl>
-//                 <input type="number" placeholder="Prix" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="owner"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Propriétaire</FormLabel>
-//               <FormControl>
-//                 <input type="text" placeholder="Nom du propriétaire" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="picture"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Image (URL)</FormLabel>
-//               <FormControl>
-//                 <input type="text" placeholder="URL de l'image" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="location"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Localisation</FormLabel>
-//               <FormControl>
-//                 <input type="text" placeholder="Localisation de l'annonce" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="category.id"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Catégorie (ID)</FormLabel>
-//               <FormControl>
-//                 <input type="number" placeholder="ID de la catégorie" {...field} />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <FormField
-//           control={form.control}
-//           name="tags"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Tags (optionnel)</FormLabel>
-//               <FormControl>
-//                 <input
-//                   type="text"
-//                   placeholder="Tags (séparés par une virgule)"
-//                   {...field}
-//                   onChange={(e) => {
-//                     const tags = e.target.value.split(',').map((tag, index) => ({
-//                       id: index + 1,
-//                       name: tag.trim(),
-//                     }))
-//                     field.onChange(tags) // On met à jour le tableau des tags
-//                   }}
-//                 />
-//               </FormControl>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-
-//         <Button type="submit">Envoyer</Button>
-//       </form>
-//     </Form>
-//   )
-// }

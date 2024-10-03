@@ -1,8 +1,8 @@
-import type { AdType } from '@/lib/types'
+import type { AdDto } from '@tgc/packages'
 import { Link } from '@tanstack/react-router'
 
 interface AdCardProps {
-  data: AdType
+  data: AdDto
   onAddToCart: (price: number) => void
 }
 

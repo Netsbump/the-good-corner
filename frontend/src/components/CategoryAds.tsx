@@ -1,16 +1,16 @@
-import type { AdType } from '@/lib/types'
+import type { AdDto } from '@tgc/packages'
 import config from '@/api/config'
 import ky from 'ky'
 import { useEffect, useState } from 'react'
 import { AdCard } from './AdCard'
 
 export function CategoryAds({ categoryId }: { categoryId: number }) {
-  const [ads, setAds] = useState<AdType[]>([])
+  const [ads, setAds] = useState<AdDto[]>([])
   const [totalPrice, setTotalPrice] = useState(0)
 
   useEffect(() => {
     const fetchAdsByCategory = async () => {
-      const listAds = await ky.get<AdType[]>(`${config.apiUrl}/ads?category_ids=${categoryId}`).json()
+      const listAds = await ky.get<AdDto[]>(`${config.apiUrl}/ads?category_ids=${categoryId}`).json()
       setAds(listAds)
     }
 

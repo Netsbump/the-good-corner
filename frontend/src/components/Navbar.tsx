@@ -1,4 +1,4 @@
-import type { CategoryType } from '@/lib/types'
+import type { CategoryDto } from '@tgc/packages'
 import config from '@/api/config'
 import { capitalizeFirstLetter } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
@@ -6,11 +6,11 @@ import ky from 'ky'
 import { useEffect, useState } from 'react'
 
 export function Navbar() {
-  const [categories, setCategories] = useState<CategoryType[]>([])
+  const [categories, setCategories] = useState<CategoryDto[]>([])
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const result = await ky.get<CategoryType[]>(`${config.apiUrl}/categories`).json()
+      const result = await ky.get<CategoryDto[]>(`${config.apiUrl}/categories`).json()
       setCategories(result)
     }
     fetchCategories()

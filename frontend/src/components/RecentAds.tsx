@@ -1,4 +1,4 @@
-import type { AdType } from '@/lib/types'
+import type { AdDto } from '@tgc/packages'
 import ky from 'ky'
 import { useEffect, useState } from 'react'
 import config from '../api/config'
@@ -6,11 +6,11 @@ import { AdCard } from './AdCard'
 
 export function RecentAds() {
   const [totalPrice, setTotalPrice] = useState(0)
-  const [ads, setAds] = useState<AdType[]>([])
+  const [ads, setAds] = useState<AdDto[]>([])
 
   useEffect(() => {
     const fetchAds = async () => {
-      const adsFromApi = await ky.get<AdType[]>(`${config.apiUrl}/ads`).json()
+      const adsFromApi = await ky.get<AdDto[]>(`${config.apiUrl}/ads`).json()
       setAds(adsFromApi)
     }
     fetchAds()
