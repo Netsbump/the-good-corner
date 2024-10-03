@@ -1,20 +1,24 @@
 import { z } from 'zod'
 
-const IdSchema = z.number().int().positive()
+export const IdSchema = z.number().int().positive()
 const NonEmptyStringScheam = z.string().min(1, 'Pattern must be a non-empty string')
 const OptionalString = z.string().optional()
 
-export const AdSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  price: z.number(),
-  owner: z.string(),
-  picture: z.string(),
-  location: z.string(),
-  category: IdSchema,
-  tags: z.array(z.object({
+export const AdSchema  = z.object({
+  title: z.string().min(2, { message: 'Le titre doit avoir au moins 2 caractères.' }),
+  description: z.string().optional(),
+  price: z.number().min(1, { message: 'Le prix doit être supérieur à 0.' }),
+  owner: z.string().min(1, { message: 'Le propriétaire est obligatoire.' }),
+  picture: z.string().url({ message: "L'URL de l'image est invalide." }),
+  location: z.string().min(2, { message: 'La localisation doit avoir au moins 2 caractères.' }),
+  category: z.object({
     id: IdSchema,
-  })).optional(),
+  }),
+  tags: z.array(
+    z.object({
+      id: IdSchema,
+    })
+  ).optional(),
 })
 
 export const AdPatchSchema = AdSchema.pick({
@@ -27,6 +31,20 @@ export const AdPatchSchema = AdSchema.pick({
   category: true,
   tags: true,
 }).partial()
+
+// Schéma pour le formulaire côté frontend
+export const AdFormSchema = AdSchema.extend({
+  category: z.object({
+    id: IdSchema,
+    name: z.string().min(1, { message: 'La catégorie doit avoir un nom' }),
+  }),
+  tags: z.array(
+    z.object({
+      id: IdSchema,
+      name: z.string().min(1, { message: 'Le tag doit avoir un nom' }),
+    })
+  ).optional(),
+})
 
 export const querySchema = z.object({
   category_ids: OptionalString,
