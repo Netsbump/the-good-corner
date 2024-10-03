@@ -1,7 +1,9 @@
 import type { Request, Response } from 'express'
 import type { AdService } from '../services/ad.service'
 import type { AdType } from '../utils/types'
-import { AdIdSchema, AdPatchSchema, AdSchema, querySchema } from '../schemas/ad.schema'
+// import { AdIdSchema, AdPatchSchema, AdSchema, querySchema } from '../schemas/ad.schema'
+import type { AdDto, AdDtoToCreate } from '@tgc/packages'
+import { AdPatchSchema, AdSchema, IdSchema, querySchema } from '@tgc/packages'
 
 export class AdController {
   constructor(private readonly adsService: AdService) {}
@@ -29,7 +31,7 @@ export class AdController {
   public async getById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseAdId = AdIdSchema.safeParse(id)
+      const parseAdId = IdSchema.safeParse(id)
 
       if (!parseAdId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -50,6 +52,7 @@ export class AdController {
 
   public async create(req: Request, res: Response) {
     try {
+      // const parseAd = AdSchema.safeParse(req.body)
       const parseAd = AdSchema.safeParse(req.body)
 
       if (!parseAd.success) {
@@ -58,7 +61,7 @@ export class AdController {
           .json({ error: 'Invalid Ad format', details: parseAd.error.errors })
       }
 
-      const newAd: AdType = parseAd.data
+      const newAd: AdDtoToCreate = parseAd.data
 
       const createdAd = await this.adsService.create(newAd)
       return res.status(201).json(createdAd)
@@ -71,7 +74,7 @@ export class AdController {
   public async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseUpdateAdId = AdIdSchema.safeParse(id)
+      const parseUpdateAdId = IdSchema.safeParse(id)
 
       if (!parseUpdateAdId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -85,7 +88,7 @@ export class AdController {
           .json({ error: 'Invalid Ad format', details: parseAd.error.errors })
       }
 
-      const updateAd: AdType = parseAd.data
+      const updateAd: AdDtoToCreate = parseAd.data
       const updateAdId = parseUpdateAdId.data
 
       const updatedAd = await this.adsService.update(updateAdId, updateAd)
@@ -102,7 +105,7 @@ export class AdController {
   public async partialUpdate(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseUpdateAdId = AdIdSchema.safeParse(id)
+      const parseUpdateAdId = IdSchema.safeParse(id)
 
       if (!parseUpdateAdId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -116,7 +119,7 @@ export class AdController {
           .json({ error: 'Invalid partial Ad format', details: parsePartialAd.error.errors })
       }
 
-      const updateFields: Partial<AdType> = parsePartialAd.data
+      const updateFields: Partial<AdDtoToCreate> = parsePartialAd.data
       const adId = parseUpdateAdId.data
 
       const updatedAd = await this.adsService.partialUpdate(adId, updateFields)
@@ -133,7 +136,7 @@ export class AdController {
   public async deleteById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseAdId = AdIdSchema.safeParse(id)
+      const parseAdId = IdSchema.safeParse(id)
 
       if (!parseAdId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })

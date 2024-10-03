@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import type { CategoryService } from '../services/category.service'
 import type { CategoryType } from '../utils/types'
-import { CategoryIdSchema, CategorySchema } from '../schemas/category.schema'
+import { CategorySchema, IdSchema } from '@tgc/packages'
 
 export class CategoryController {
   constructor(private readonly categoriesService: CategoryService) {}
@@ -19,7 +19,7 @@ export class CategoryController {
   public async getById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parsedId = CategoryIdSchema.safeParse(id)
+      const parsedId = IdSchema.safeParse(id)
 
       if (!parsedId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -58,7 +58,7 @@ export class CategoryController {
   public async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parsedId = CategoryIdSchema.safeParse(id)
+      const parsedId = IdSchema.safeParse(id)
 
       if (!parsedId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -87,7 +87,7 @@ export class CategoryController {
   public async deleteById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseId = CategoryIdSchema.safeParse(id)
+      const parseId = IdSchema.safeParse(id)
 
       if (!parseId.success) {
         return res.status(400).json('Invalid ID format')

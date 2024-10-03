@@ -1,9 +1,13 @@
+import type { AdDtoToCreate } from '@tgc/packages'
 import type { AdType } from './types'
 import { faker } from '@faker-js/faker'
-import { BORDEAUX, LYON, PARIS } from './constants'
 
-export function getFakeAds(): AdType[] {
-  const ads: AdType[] = []
+const LYON = 'Lyon'
+const PARIS = 'Paris'
+const BORDEAUX = 'Bordeaux'
+
+export function getFakeAds(): AdDtoToCreate[] {
+  const ads: AdDtoToCreate[] = []
 
   for (let i = 0; i < 20; i++) {
     ads.push({
@@ -13,7 +17,7 @@ export function getFakeAds(): AdType[] {
       owner: faker.person.firstName(),
       picture: faker.image.url(),
       location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
-      category: faker.helpers.arrayElement([1, 2, 3]),
+      category: faker.helpers.arrayElement([{ id: 1 }]),
       tags: faker.helpers.arrayElements([ // Générez un tableau de tags
         { id: 1 },
         { id: 2 },

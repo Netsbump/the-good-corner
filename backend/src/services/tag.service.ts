@@ -1,6 +1,6 @@
+import type { TagDto } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Tag } from '../entities/tag.entity'
-import type { TagType } from '../utils/types'
 
 export class TagService {
   constructor(private readonly tagsRepository: Repository<Tag>) {}
@@ -14,7 +14,7 @@ export class TagService {
     }
   }
 
-  public async create(tag: TagType): Promise<Tag> {
+  public async create(tag: Omit<TagDto, 'id'>): Promise<Tag> {
     try {
       const newTag = this.tagsRepository.create()
 
@@ -29,7 +29,7 @@ export class TagService {
     }
   }
 
-  public async update(id: number, tag: TagType): Promise<Tag | null> {
+  public async update(id: number, tag: Omit<TagDto, 'id'>): Promise<Tag | null> {
     try {
       const tagToUpdate = await this.tagsRepository.findOneBy({ id })
 

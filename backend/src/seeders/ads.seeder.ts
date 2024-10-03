@@ -34,14 +34,16 @@ export async function seedAds() {
   const ads = fakeAds.map((adData) => {
     const ad = new Ad()
     ad.title = adData.title
-    ad.description = adData.description
+    if (adData.description) {
+      ad.description = adData.description
+    }
     ad.price = adData.price
     ad.owner = adData.owner
     ad.picture = adData.picture
     ad.location = adData.location
 
     // Trouver la catégorie correspondante et l'associer à l'annonce
-    const category = categoryMap.get(adData.category)
+    const category = categoryMap.get(adData.category.id)
     if (!category) {
       throw new Error(`Category with ID ${adData.category} not found`)
     }

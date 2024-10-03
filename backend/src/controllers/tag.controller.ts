@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import type { TagService } from '../services/tag.service'
 import type { TagType } from '../utils/types'
-import { TagIdSchema, TagSchema } from '../schemas/tag.schema'
+import { IdSchema, TagSchema } from '@tgc/packages'
 
 export class TagController {
   constructor(private readonly tagsService: TagService) {}
@@ -37,7 +37,7 @@ export class TagController {
   public async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parsedId = TagIdSchema.safeParse(id)
+      const parsedId = IdSchema.safeParse(id)
 
       if (!parsedId.success) {
         return res.status(400).json({ error: 'Invalid ID format' })
@@ -66,7 +66,7 @@ export class TagController {
   public async deleteById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id)
-      const parseId = TagIdSchema.safeParse(id)
+      const parseId = IdSchema.safeParse(id)
 
       if (!parseId.success) {
         return res.status(400).json('Invalid ID format')

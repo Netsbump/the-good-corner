@@ -1,3 +1,4 @@
+import type { AdDtoToCreate } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Ad } from '../entities/ad.entity'
 import type { Category } from '../entities/category.entity'
@@ -43,16 +44,18 @@ export class AdService {
     return ad || null
   }
 
-  public async create(ad: AdType): Promise<Ad> {
+  public async create(ad: AdDtoToCreate): Promise<Ad> {
     try {
       const newAd = this.adsRepository.create()
       newAd.title = ad.title
-      newAd.description = ad.description
+      if (ad.description) {
+        newAd.description = ad.description
+      }
       newAd.price = ad.price
       newAd.owner = ad.owner
       newAd.picture = ad.picture
       newAd.location = ad.location
-      newAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
+      newAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
 
       // Vérification et ajout des tags
       if (ad.tags && ad.tags.length > 0) {
@@ -77,7 +80,7 @@ export class AdService {
     }
   }
 
-  public async update(id: number, ad: AdType): Promise<Ad | null> {
+  public async update(id: number, ad: AdDtoToCreate): Promise<Ad | null> {
     try {
       const updateAd = await this.adsRepository.findOneBy({ id })
 
@@ -86,12 +89,14 @@ export class AdService {
       }
 
       updateAd.title = ad.title
-      updateAd.description = ad.description
+      if (ad.description) {
+        updateAd.description = ad.description
+      }
       updateAd.price = ad.price
       updateAd.owner = ad.owner
       updateAd.picture = ad.picture
       updateAd.location = ad.location
-      updateAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
+      updateAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
 
       await this.adsRepository.save(updateAd)
 
@@ -102,7 +107,7 @@ export class AdService {
     }
   }
 
-  public async partialUpdate(id: number, ad: Partial<AdType>): Promise<Ad | null> {
+  public async partialUpdate(id: number, ad: Partial<AdDtoToCreate>): Promise<Ad | null> {
     try {
       const adToUpdate = await this.adsRepository.findOneBy({ id })
 
@@ -111,7 +116,7 @@ export class AdService {
       }
 
       if (ad.category) {
-        adToUpdate.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
+        adToUpdate.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
       }
 
       Object.assign(adToUpdate, ad)
