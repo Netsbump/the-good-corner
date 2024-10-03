@@ -21,17 +21,6 @@ export const AdSchema  = z.object({
   ).optional(),
 })
 
-export const AdPatchSchema = AdSchema.pick({
-  title: true,
-  description: true,
-  price: true,
-  owner: true,
-  picture: true,
-  location: true,
-  category: true,
-  tags: true,
-}).partial()
-
 // Schéma pour le formulaire côté frontend
 export const AdFormSchema = AdSchema.extend({
   category: z.object({
@@ -45,6 +34,17 @@ export const AdFormSchema = AdSchema.extend({
     })
   ).optional(),
 })
+
+export const AdPatchSchema = AdSchema.pick({
+  title: true,
+  description: true,
+  price: true,
+  owner: true,
+  picture: true,
+  location: true,
+  category: true,
+  tags: true,
+}).partial()
 
 export const querySchema = z.object({
   category_ids: OptionalString,
