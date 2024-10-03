@@ -1,20 +1,21 @@
 import type { AdType } from '@/lib/types'
+import config from '@/api/config'
 import ky from 'ky'
 import { useEffect, useState } from 'react'
-import config from '../api/config'
 import { AdCard } from './AdCard'
 
-export function RecentAds() {
-  const [totalPrice, setTotalPrice] = useState(0)
+export function CategoryAds({ categoryId }: { categoryId: number }) {
   const [ads, setAds] = useState<AdType[]>([])
+  const [totalPrice, setTotalPrice] = useState(0)
 
   useEffect(() => {
-    const fetchAds = async () => {
-      const adsFromApi = await ky.get<AdType[]>(`${config.apiUrl}/ads`).json()
-      setAds(adsFromApi)
+    const fetchAdsByCategory = async () => {
+      const listAds = await ky.get<AdType[]>(`${config.apiUrl}/ads?category_ids=${categoryId}`).json()
+      setAds(listAds)
     }
-    fetchAds()
-  }, [])
+
+    fetchAdsByCategory()
+  }, [categoryId])
 
   const handleClickButtonCard = (priceCard: number) => {
     setTotalPrice(prev => prev + priceCard)
@@ -22,9 +23,12 @@ export function RecentAds() {
 
   return (
     <>
-      <h2>Annonces récentes</h2>
+      <h2>
+        Annonces pour la catégorie
+        {/* {categoryName} */}
+      </h2>
       <p>
-        Prix total:
+        Prix total :
         {totalPrice}
       </p>
       <section className="recent-ads">

@@ -1,45 +1,29 @@
+import type { CategoryType } from '@/lib/types'
+import config from '@/api/config'
+import { capitalizeFirstLetter } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
+import ky from 'ky'
+import { useEffect, useState } from 'react'
 
 export function Navbar() {
+  const [categories, setCategories] = useState<CategoryType[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const result = await ky.get<CategoryType[]>(`${config.apiUrl}/categories`).json()
+      setCategories(result)
+    }
+    fetchCategories()
+  }, [])
+
   return (
     <nav className="categories-navigation">
-      <Link to="/ameublement" className="category-navigation-link">Ameublement</Link>
-      {' '}
-      •
-      <Link to="/electromenager" className="category-navigation-link">Électroménager</Link>
-      {' '}
-      •
-      <Link to="/photographie" className="category-navigation-link">Photographie</Link>
-      {' '}
-      •
-      <Link to="/informatique" className="category-navigation-link">Informatique</Link>
-      {' '}
-      •
-      <Link to="/telephonie" className="category-navigation-link">Téléphonie</Link>
-      {' '}
-      •
-      <Link to="/velos" className="category-navigation-link">Vélos</Link>
-      {' '}
-      •
-      <Link to="/vehicules" className="category-navigation-link">Véhicules</Link>
-      {' '}
-      •
-      <Link to="/sport" className="category-navigation-link">Sport</Link>
-      {' '}
-      •
-      <Link to="/habillement" className="category-navigation-link">Habillement</Link>
-      {' '}
-      •
-      <Link to="/bebe" className="category-navigation-link">Bébé</Link>
-      {' '}
-      •
-      <Link to="/outillage" className="category-navigation-link">Outillage</Link>
-      {' '}
-      •
-      <Link to="/services" className="category-navigation-link">Services</Link>
-      {' '}
-      •
-      <Link to="/vacances" className="category-navigation-link">Vacances</Link>
+      {categories.map(category => (
+
+        <Link key={category.id} to="/ads" search={{ categoryId: category.id }} className="category-navigation-link">{capitalizeFirstLetter(category.name)}</Link>
+
+      ),
+      )}
     </nav>
   )
 }

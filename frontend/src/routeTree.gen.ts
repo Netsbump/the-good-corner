@@ -13,94 +13,16 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as AdsIndexImport } from './routes/ads.index'
 import { Route as AdsAdIdImport } from './routes/ads.$adId'
+import { Route as AdNewImport } from './routes/ad.new'
 
 // Create Virtual Routes
 
-const VelosLazyImport = createFileRoute('/velos')()
-const VehiculesLazyImport = createFileRoute('/vehicules')()
-const VacancesLazyImport = createFileRoute('/vacances')()
-const TelephonieLazyImport = createFileRoute('/telephonie')()
-const SportLazyImport = createFileRoute('/sport')()
-const ServicesLazyImport = createFileRoute('/services')()
-const PhotographieLazyImport = createFileRoute('/photographie')()
-const OutillageLazyImport = createFileRoute('/outillage')()
-const InformatiqueLazyImport = createFileRoute('/informatique')()
-const HabillementLazyImport = createFileRoute('/habillement')()
-const ElectromenagerLazyImport = createFileRoute('/electromenager')()
-const BebeLazyImport = createFileRoute('/bebe')()
-const AmeublementLazyImport = createFileRoute('/ameublement')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
-
-const VelosLazyRoute = VelosLazyImport.update({
-  path: '/velos',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/velos.lazy').then((d) => d.Route))
-
-const VehiculesLazyRoute = VehiculesLazyImport.update({
-  path: '/vehicules',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/vehicules.lazy').then((d) => d.Route))
-
-const VacancesLazyRoute = VacancesLazyImport.update({
-  path: '/vacances',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/vacances.lazy').then((d) => d.Route))
-
-const TelephonieLazyRoute = TelephonieLazyImport.update({
-  path: '/telephonie',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/telephonie.lazy').then((d) => d.Route))
-
-const SportLazyRoute = SportLazyImport.update({
-  path: '/sport',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/sport.lazy').then((d) => d.Route))
-
-const ServicesLazyRoute = ServicesLazyImport.update({
-  path: '/services',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/services.lazy').then((d) => d.Route))
-
-const PhotographieLazyRoute = PhotographieLazyImport.update({
-  path: '/photographie',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/photographie.lazy').then((d) => d.Route))
-
-const OutillageLazyRoute = OutillageLazyImport.update({
-  path: '/outillage',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/outillage.lazy').then((d) => d.Route))
-
-const InformatiqueLazyRoute = InformatiqueLazyImport.update({
-  path: '/informatique',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/informatique.lazy').then((d) => d.Route))
-
-const HabillementLazyRoute = HabillementLazyImport.update({
-  path: '/habillement',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/habillement.lazy').then((d) => d.Route))
-
-const ElectromenagerLazyRoute = ElectromenagerLazyImport.update({
-  path: '/electromenager',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/electromenager.lazy').then((d) => d.Route),
-)
-
-const BebeLazyRoute = BebeLazyImport.update({
-  path: '/bebe',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/bebe.lazy').then((d) => d.Route))
-
-const AmeublementLazyRoute = AmeublementLazyImport.update({
-  path: '/ameublement',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/ameublement.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -112,8 +34,18 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const AdsIndexRoute = AdsIndexImport.update({
+  path: '/ads/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AdsAdIdRoute = AdsAdIdImport.update({
   path: '/ads/$adId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AdNewRoute = AdNewImport.update({
+  path: '/ad/new',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -135,95 +67,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
-    '/ameublement': {
-      id: '/ameublement'
-      path: '/ameublement'
-      fullPath: '/ameublement'
-      preLoaderRoute: typeof AmeublementLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/bebe': {
-      id: '/bebe'
-      path: '/bebe'
-      fullPath: '/bebe'
-      preLoaderRoute: typeof BebeLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/electromenager': {
-      id: '/electromenager'
-      path: '/electromenager'
-      fullPath: '/electromenager'
-      preLoaderRoute: typeof ElectromenagerLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/habillement': {
-      id: '/habillement'
-      path: '/habillement'
-      fullPath: '/habillement'
-      preLoaderRoute: typeof HabillementLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/informatique': {
-      id: '/informatique'
-      path: '/informatique'
-      fullPath: '/informatique'
-      preLoaderRoute: typeof InformatiqueLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/outillage': {
-      id: '/outillage'
-      path: '/outillage'
-      fullPath: '/outillage'
-      preLoaderRoute: typeof OutillageLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/photographie': {
-      id: '/photographie'
-      path: '/photographie'
-      fullPath: '/photographie'
-      preLoaderRoute: typeof PhotographieLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/sport': {
-      id: '/sport'
-      path: '/sport'
-      fullPath: '/sport'
-      preLoaderRoute: typeof SportLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/telephonie': {
-      id: '/telephonie'
-      path: '/telephonie'
-      fullPath: '/telephonie'
-      preLoaderRoute: typeof TelephonieLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/vacances': {
-      id: '/vacances'
-      path: '/vacances'
-      fullPath: '/vacances'
-      preLoaderRoute: typeof VacancesLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/vehicules': {
-      id: '/vehicules'
-      path: '/vehicules'
-      fullPath: '/vehicules'
-      preLoaderRoute: typeof VehiculesLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/velos': {
-      id: '/velos'
-      path: '/velos'
-      fullPath: '/velos'
-      preLoaderRoute: typeof VelosLazyImport
+    '/ad/new': {
+      id: '/ad/new'
+      path: '/ad/new'
+      fullPath: '/ad/new'
+      preLoaderRoute: typeof AdNewImport
       parentRoute: typeof rootRoute
     }
     '/ads/$adId': {
@@ -231,6 +79,13 @@ declare module '@tanstack/react-router' {
       path: '/ads/$adId'
       fullPath: '/ads/$adId'
       preLoaderRoute: typeof AdsAdIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/ads/': {
+      id: '/ads/'
+      path: '/ads'
+      fullPath: '/ads'
+      preLoaderRoute: typeof AdsIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -241,155 +96,51 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
-  '/ameublement': typeof AmeublementLazyRoute
-  '/bebe': typeof BebeLazyRoute
-  '/electromenager': typeof ElectromenagerLazyRoute
-  '/habillement': typeof HabillementLazyRoute
-  '/informatique': typeof InformatiqueLazyRoute
-  '/outillage': typeof OutillageLazyRoute
-  '/photographie': typeof PhotographieLazyRoute
-  '/services': typeof ServicesLazyRoute
-  '/sport': typeof SportLazyRoute
-  '/telephonie': typeof TelephonieLazyRoute
-  '/vacances': typeof VacancesLazyRoute
-  '/vehicules': typeof VehiculesLazyRoute
-  '/velos': typeof VelosLazyRoute
+  '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/ads': typeof AdsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
-  '/ameublement': typeof AmeublementLazyRoute
-  '/bebe': typeof BebeLazyRoute
-  '/electromenager': typeof ElectromenagerLazyRoute
-  '/habillement': typeof HabillementLazyRoute
-  '/informatique': typeof InformatiqueLazyRoute
-  '/outillage': typeof OutillageLazyRoute
-  '/photographie': typeof PhotographieLazyRoute
-  '/services': typeof ServicesLazyRoute
-  '/sport': typeof SportLazyRoute
-  '/telephonie': typeof TelephonieLazyRoute
-  '/vacances': typeof VacancesLazyRoute
-  '/vehicules': typeof VehiculesLazyRoute
-  '/velos': typeof VelosLazyRoute
+  '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/ads': typeof AdsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/about': typeof AboutLazyRoute
-  '/ameublement': typeof AmeublementLazyRoute
-  '/bebe': typeof BebeLazyRoute
-  '/electromenager': typeof ElectromenagerLazyRoute
-  '/habillement': typeof HabillementLazyRoute
-  '/informatique': typeof InformatiqueLazyRoute
-  '/outillage': typeof OutillageLazyRoute
-  '/photographie': typeof PhotographieLazyRoute
-  '/services': typeof ServicesLazyRoute
-  '/sport': typeof SportLazyRoute
-  '/telephonie': typeof TelephonieLazyRoute
-  '/vacances': typeof VacancesLazyRoute
-  '/vehicules': typeof VehiculesLazyRoute
-  '/velos': typeof VelosLazyRoute
+  '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/ads/': typeof AdsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/about'
-    | '/ameublement'
-    | '/bebe'
-    | '/electromenager'
-    | '/habillement'
-    | '/informatique'
-    | '/outillage'
-    | '/photographie'
-    | '/services'
-    | '/sport'
-    | '/telephonie'
-    | '/vacances'
-    | '/vehicules'
-    | '/velos'
-    | '/ads/$adId'
+  fullPaths: '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/ameublement'
-    | '/bebe'
-    | '/electromenager'
-    | '/habillement'
-    | '/informatique'
-    | '/outillage'
-    | '/photographie'
-    | '/services'
-    | '/sport'
-    | '/telephonie'
-    | '/vacances'
-    | '/vehicules'
-    | '/velos'
-    | '/ads/$adId'
-  id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/ameublement'
-    | '/bebe'
-    | '/electromenager'
-    | '/habillement'
-    | '/informatique'
-    | '/outillage'
-    | '/photographie'
-    | '/services'
-    | '/sport'
-    | '/telephonie'
-    | '/vacances'
-    | '/vehicules'
-    | '/velos'
-    | '/ads/$adId'
+  to: '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads'
+  id: '__root__' | '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AboutLazyRoute: typeof AboutLazyRoute
-  AmeublementLazyRoute: typeof AmeublementLazyRoute
-  BebeLazyRoute: typeof BebeLazyRoute
-  ElectromenagerLazyRoute: typeof ElectromenagerLazyRoute
-  HabillementLazyRoute: typeof HabillementLazyRoute
-  InformatiqueLazyRoute: typeof InformatiqueLazyRoute
-  OutillageLazyRoute: typeof OutillageLazyRoute
-  PhotographieLazyRoute: typeof PhotographieLazyRoute
-  ServicesLazyRoute: typeof ServicesLazyRoute
-  SportLazyRoute: typeof SportLazyRoute
-  TelephonieLazyRoute: typeof TelephonieLazyRoute
-  VacancesLazyRoute: typeof VacancesLazyRoute
-  VehiculesLazyRoute: typeof VehiculesLazyRoute
-  VelosLazyRoute: typeof VelosLazyRoute
+  AdNewRoute: typeof AdNewRoute
   AdsAdIdRoute: typeof AdsAdIdRoute
+  AdsIndexRoute: typeof AdsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AboutLazyRoute: AboutLazyRoute,
-  AmeublementLazyRoute: AmeublementLazyRoute,
-  BebeLazyRoute: BebeLazyRoute,
-  ElectromenagerLazyRoute: ElectromenagerLazyRoute,
-  HabillementLazyRoute: HabillementLazyRoute,
-  InformatiqueLazyRoute: InformatiqueLazyRoute,
-  OutillageLazyRoute: OutillageLazyRoute,
-  PhotographieLazyRoute: PhotographieLazyRoute,
-  ServicesLazyRoute: ServicesLazyRoute,
-  SportLazyRoute: SportLazyRoute,
-  TelephonieLazyRoute: TelephonieLazyRoute,
-  VacancesLazyRoute: VacancesLazyRoute,
-  VehiculesLazyRoute: VehiculesLazyRoute,
-  VelosLazyRoute: VelosLazyRoute,
+  AdNewRoute: AdNewRoute,
   AdsAdIdRoute: AdsAdIdRoute,
+  AdsIndexRoute: AdsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -406,20 +157,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
-        "/ameublement",
-        "/bebe",
-        "/electromenager",
-        "/habillement",
-        "/informatique",
-        "/outillage",
-        "/photographie",
-        "/services",
-        "/sport",
-        "/telephonie",
-        "/vacances",
-        "/vehicules",
-        "/velos",
-        "/ads/$adId"
+        "/ad/new",
+        "/ads/$adId",
+        "/ads/"
       ]
     },
     "/": {
@@ -428,47 +168,14 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about.lazy.tsx"
     },
-    "/ameublement": {
-      "filePath": "ameublement.lazy.tsx"
-    },
-    "/bebe": {
-      "filePath": "bebe.lazy.tsx"
-    },
-    "/electromenager": {
-      "filePath": "electromenager.lazy.tsx"
-    },
-    "/habillement": {
-      "filePath": "habillement.lazy.tsx"
-    },
-    "/informatique": {
-      "filePath": "informatique.lazy.tsx"
-    },
-    "/outillage": {
-      "filePath": "outillage.lazy.tsx"
-    },
-    "/photographie": {
-      "filePath": "photographie.lazy.tsx"
-    },
-    "/services": {
-      "filePath": "services.lazy.tsx"
-    },
-    "/sport": {
-      "filePath": "sport.lazy.tsx"
-    },
-    "/telephonie": {
-      "filePath": "telephonie.lazy.tsx"
-    },
-    "/vacances": {
-      "filePath": "vacances.lazy.tsx"
-    },
-    "/vehicules": {
-      "filePath": "vehicules.lazy.tsx"
-    },
-    "/velos": {
-      "filePath": "velos.lazy.tsx"
+    "/ad/new": {
+      "filePath": "ad.new.tsx"
     },
     "/ads/$adId": {
       "filePath": "ads.$adId.tsx"
+    },
+    "/ads/": {
+      "filePath": "ads.index.tsx"
     }
   }
 }

@@ -2,7 +2,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@tgc/packages/*": ["../packages/*"] // Chemin relatif vers ton package partagé
+
     }
   },
   "references": [
