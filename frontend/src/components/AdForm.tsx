@@ -1,47 +1,31 @@
 'use client'
 
 import type { CategoryDto, TagDto } from '@tgc/packages'
+import type { z } from 'zod'
 import { fetchCategories, fetchTags, postAd } from '@/api/api'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
+import { AdFormSchema } from '@tgc/packages'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-
-const adFormSchema = z.object({
-  title: z.string().min(2, { message: 'Le titre doit avoir au moins 2 caractères.' }),
-  price: z.number().min(1, { message: 'Le prix doit être supérieur à 0.' }),
-  owner: z.string().min(1, { message: 'Le propriétaire est obligatoire.' }),
-  picture: z.string().url({ message: 'L\'URL de l\'image est invalide.' }),
-  location: z.string().min(2, { message: 'La localisation doit avoir au moins 2 caractères.' }),
-  category: z.object({
-    id: z.number().min(1, { message: 'Une catégorie doit être sélectionnée.' }),
-    name: z.string(),
-  }),
-  tags: z.array(z.object({
-    id: z.number().min(1, { message: 'Tag invalide' }),
-    name: z.string().min(1, { message: 'Le tag doit avoir un nom' }),
-  })).optional(), // Les tags sont optionnels
-})
 
 export function AdForm() {
   const [categories, setCategories] = useState<CategoryDto[]>([])
   const [tags, setTags] = useState<TagDto[]>([])
   const [loading, setLoading] = useState(true)
-  // Initialisation de React Hook Form avec le schéma Zod
+
   const form = useForm({
-    resolver: zodResolver(adFormSchema),
+    resolver: zodResolver(AdFormSchema),
     defaultValues: {
       title: '',
       price: 0,
       owner: '',
       picture: '',
       location: '',
-      category: { id: 0, name: '' }, // Category initialisée
-      tags: [], // Les tags initialisés à un tableau vide
+      category: { id: 0, name: '' },
+      tags: [],
     },
   })
 
@@ -63,16 +47,19 @@ export function AdForm() {
   }, [])
 
   // Soumission du formulaire
-  const onSubmit = async (values: z.infer<typeof adFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof AdFormSchema>) => {
     console.warn(values)
 
     const preparedData = {
       ...values,
-      category: values.category.id, // Garde uniquement l'ID de la catégorie
+      category: { id: Number(values.category.id) },
       tags: values.tags?.map(tag => ({ id: tag.id })) || [], // Garde uniquement les ID des tags
     }
 
     console.warn(preparedData)
+
+    const result = await postAd(preparedData)
+    console.warn(result)
   }
 
   // Si en cours de chargement, on affiche un message ou un spinner

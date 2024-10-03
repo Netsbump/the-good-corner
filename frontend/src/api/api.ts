@@ -1,4 +1,4 @@
-import type { AdDto, CategoryDto, TagDto } from '@tgc/packages'
+import type { AdDto, AdDtoToCreate, CategoryDto, TagDto } from '@tgc/packages'
 import config from '@/api/config'
 import ky from 'ky'
 
@@ -14,6 +14,6 @@ export async function fetchAdById(id: number) {
   return await ky.get<AdDto>(`${config.apiUrl}/ads/${id}`).json()
 }
 
-export async function postAd(ad: AdDto) {
+export async function postAd(ad: AdDtoToCreate) {
   return await ky.post<AdDto>(`${config.apiUrl}/ads`, { json: ad }).json()
 }
