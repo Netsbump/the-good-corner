@@ -1,0 +1,17 @@
+{
+  "name": "@tgc/packages",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dtos.ts",
+  "types": "dtos.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}
