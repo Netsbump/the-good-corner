@@ -47,12 +47,15 @@ export async function seedAds() {
     }
     ad.category = category
 
-    // Trouver la catégorie correspondante et l'associer à l'annonce
-    const tag = tagMap.get(adData.tags)
-    if (!tag) {
-      throw new Error(`Tag with ID ${adData.tags} not found`)
-    }
-    ad.tags = [tag]
+    const adTags = adData.tags?.map((tagData) => {
+      const tag = tagMap.get(tagData.id)
+      if (!tag) {
+        throw new Error(`Tag with ID ${tagData.id} not found`)
+      }
+      return tag
+    }) || [] // Si aucun tag n'est présent, retourne un tableau vide
+
+    ad.tags = adTags // Associe tous les tags trouvés à l'annonce
 
     return ad
   })

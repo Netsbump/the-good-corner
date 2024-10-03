@@ -1,11 +1,12 @@
 import type { Repository } from 'typeorm'
 import type { Ad } from '../entities/ad.entity'
 import type { Category } from '../entities/category.entity'
+import type { Tag } from '../entities/tag.entity'
 import type { AdType } from '../utils/types'
 import { In } from 'typeorm'
 
 export class AdService {
-  constructor(private readonly adsRepository: Repository<Ad>, private readonly categoryRepository: Repository<Category>) {}
+  constructor(private readonly adsRepository: Repository<Ad>, private readonly categoryRepository: Repository<Category>, private readonly tagRepository: Repository<Tag>) {}
 
   public async getAll(categoryIds?: string) {
     try {
@@ -37,7 +38,7 @@ export class AdService {
   public async getById(id: number): Promise<Ad | null> {
     const ad = await this.adsRepository.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ['category', 'tags'],
     })
     return ad || null
   }
@@ -52,6 +53,20 @@ export class AdService {
       newAd.picture = ad.picture
       newAd.location = ad.location
       newAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category })
+
+      // Vérification et ajout des tags
+      if (ad.tags && ad.tags.length > 0) {
+        const tagIds = ad.tags.map(tag => tag.id)
+        const existingTags = await this.tagRepository.find({
+          where: { id: In(tagIds) }, // Utilisation de find avec where et In pour filtrer par ID
+        })
+
+        if (existingTags.length !== ad.tags.length) {
+          throw new Error('Some tags could not be found.')
+        }
+
+        newAd.tags = existingTags
+      }
 
       await this.adsRepository.save(newAd)
 

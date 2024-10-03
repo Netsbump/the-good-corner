@@ -12,7 +12,9 @@ export const AdSchema = z.object({
   picture: z.string(),
   location: z.enum([PARIS, BORDEAUX, LYON]),
   category: categoryIdSchema,
-  tags: tagsIdSchema,
+  tags: z.array(z.object({
+    id: tagsIdSchema,
+  })).optional(),
 })
 
 export const AdPatchSchema = AdSchema.pick({

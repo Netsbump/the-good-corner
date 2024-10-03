@@ -2,7 +2,7 @@ GET http://localhost:3000/api/ads
 
 ###
 
-GET http://localhost:3000/api/ads/62
+GET http://localhost:3000/api/ads/61
 
 ###
 
@@ -24,7 +24,11 @@ Content-Type: application/json
     "price": 50,
     "picture": "https://images.lecho.be/view?iid=dc:113129565&context=ONLINE&ratio=16/9&width=640&u=1508242455000",
     "location": "Paris",
-    "category": 1
+    "category": 1, 
+     "tags": [
+        { "id": 1 },
+        { "id": 2 }
+    ]
 }
 
 ### 

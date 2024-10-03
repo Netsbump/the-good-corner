@@ -13,7 +13,7 @@ export async function seedCategories() {
 
   // Les catégories à insérer
   const categories = [
-    { name: 'vêtement' },
+    { name: 'vetement' },
     { name: 'voiture' },
     { name: 'autres' },
   ]

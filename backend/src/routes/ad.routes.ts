@@ -3,11 +3,13 @@ import { AdController } from '../controllers/ad.controller'
 import { dataSource } from '../datasource'
 import { Ad } from '../entities/ad.entity'
 import { Category } from '../entities/category.entity'
+import { Tag } from '../entities/tag.entity'
 import { AdService } from '../services/ad.service'
 
 const adRepository = dataSource.getRepository(Ad)
 const categoryRepository = dataSource.getRepository(Category)
-const adService = new AdService(adRepository, categoryRepository)
+const tagRepository = dataSource.getRepository(Tag)
+const adService = new AdService(adRepository, categoryRepository, tagRepository)
 const adController = new AdController(adService)
 
 const router = Router()

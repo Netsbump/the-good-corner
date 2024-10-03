@@ -5,7 +5,7 @@ import { BORDEAUX, LYON, PARIS } from './constants'
 export function getFakeAds(): AdType[] {
   const ads: AdType[] = []
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 20; i++) {
     ads.push({
       title: faker.commerce.productName(),
       description: faker.lorem.sentence(),
@@ -14,7 +14,11 @@ export function getFakeAds(): AdType[] {
       picture: faker.image.url(),
       location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
       category: faker.helpers.arrayElement([1, 2, 3]),
-      tags: faker.helpers.arrayElement([1, 2, 3]),
+      tags: faker.helpers.arrayElements([ // Générez un tableau de tags
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+      ]),
     })
   }
 
