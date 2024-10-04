@@ -1,6 +1,6 @@
+import type { AdDto } from '@tgc/packages'
 import config from '@/api/config'
-import { CategoryAds } from '@/components/CategoryAds'
-import { RecentAds } from '@/components/RecentAds'
+import { AdCard } from '@/components/AdCard'
 import { createFileRoute } from '@tanstack/react-router'
 import ky from 'ky'
 import { useEffect, useState } from 'react'
@@ -14,41 +14,43 @@ export const Route = createFileRoute('/ads/')({
 
 function AdsPage() {
   const { categoryId } = Route.useSearch() // Récupère les query params optionnels
-  // const navigate = useNavigate() // Pour modifier les query params sans recharger la page
-  const [isValidCategory, setIsValidCategory] = useState(true)
+  const [isValidCategory, setIsValidCategory] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [ads, setAds] = useState<AdDto[]>([])
 
   useEffect(() => {
-    const validateCategory = async () => {
+    const fetchAds = async () => {
       setLoading(true)
-      if (categoryId) {
-        try {
-          // Appel API pour valider si la catégorie existe
-          const category = await ky
-            .get(`${config.apiUrl}/categories/${categoryId}`)
-            .json()
-          if (!category) {
-            setIsValidCategory(false) // Si la catégorie n'existe pas
-          }
-          else {
-            setIsValidCategory(true)
-          }
+      try {
+        if (categoryId) {
+          // Appel avec filtrage par catégorie
+          const listAds = await ky.get<AdDto[]>(`${config.apiUrl}/ads?category_ids=${categoryId}`).json()
+          setAds(listAds)
+          setIsValidCategory(true)
         }
-        catch {
-          setIsValidCategory(false)
+        else {
+          // Appel sans catégorie
+          const adsFromApi = await ky.get<AdDto[]>(`${config.apiUrl}/ads`).json()
+          setAds(adsFromApi)
         }
       }
-      setLoading(false)
+      catch (error) {
+        if (categoryId) {
+          // Erreur spécifique à la catégorie
+          setIsValidCategory(false)
+        }
+        else {
+          // Erreur générale (réseau, serveur, etc.)
+          console.error('Erreur lors de la récupération des annonces', error)
+        }
+      }
+      finally {
+        setLoading(false)
+      }
     }
 
-    validateCategory()
+    fetchAds()
   }, [categoryId])
-
-  //   const handleCategoryChange = (newCategoryId) => {
-  //     navigate({
-  //       search: { categoryId: newCategoryId }, // Mise à jour du paramètre de recherche
-  //     })
-  //   }
 
   if (loading) {
     return <div>Chargement des annonces...</div>
@@ -67,22 +69,19 @@ function AdsPage() {
     )
   }
 
-  if (!categoryId) {
-    return (
-      <div>
-        <h1>Annonces récentes</h1>
-        <RecentAds />
-      </div>
-    )
-  }
-
   return (
-    <div>
-      <h1>
-        Catégorie :
-        {categoryId}
-      </h1>
-      <CategoryAds categoryId={categoryId} />
-    </div>
+    <section className="recent-ads">
+      {!categoryId && (<h1>Toutes les annonces</h1>)}
+
+      {ads && ads.map(ad => (
+        <div key={ad.id}>
+          <AdCard
+            data={ad}
+          />
+        </div>
+      ))}
+
+      <div>Aucune annonces trouvés</div>
+    </section>
   )
 }

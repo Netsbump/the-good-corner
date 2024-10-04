@@ -17,3 +17,11 @@ export async function fetchAdById(id: number) {
 export async function postAd(ad: AdDtoToCreate) {
   return await ky.post<AdDto>(`${config.apiUrl}/ads`, { json: ad }).json()
 }
+
+export async function deleteAd(id: number) {
+  return await ky.delete(`${config.apiUrl}/ads/${id}`).json()
+}
+
+export async function updateAd(id: number, ad: AdDtoToCreate) {
+  return await ky.put(`${config.apiUrl}/ads/${id}`, { json: ad }).json()
+}

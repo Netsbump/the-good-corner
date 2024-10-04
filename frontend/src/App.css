@@ -1,6 +1,11 @@
 * {
   box-sizing: border-box;
 }
+
+html {
+  /* max-width: 1066px; */
+  min-width: 1066px;
+}
  
 body {
   margin: 0;
@@ -71,7 +76,6 @@ h1 {
  
 .text-field-with-button {
   display: flex;
-  flex-grow: 1;
   justify-content: center;
   gap: 4px;
 }
@@ -167,7 +171,8 @@ h1 {
   .categories-navigation {
     padding-top: 14px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 2rem;
   }
  
   .ad-details-image-container {

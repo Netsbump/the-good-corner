@@ -3,10 +3,9 @@ import { Link } from '@tanstack/react-router'
 
 interface AdCardProps {
   data: AdDto
-  onAddToCart: (price: number) => void
 }
 
-export function AdCard({ data, onAddToCart }: AdCardProps) {
+export function AdCard({ data }: AdCardProps) {
   const { title, picture, price, id, category, tags } = data
   const link = `/ads/${id}`
 
@@ -36,9 +35,6 @@ export function AdCard({ data, onAddToCart }: AdCardProps) {
         </Link>
 
       </div>
-      <button className="button" onClick={() => onAddToCart(price)}>
-        Ajouter le prix au total
-      </button>
     </div>
   )
 }

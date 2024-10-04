@@ -1,34 +1,37 @@
 'use client'
 
-import type { CategoryDto, TagDto } from '@tgc/packages'
+import type { AdDto, CategoryDto, TagDto } from '@tgc/packages'
 import type { z } from 'zod'
-import { fetchCategories, fetchTags, postAd } from '@/api/api'
+import { fetchCategories, fetchTags, postAd, updateAd } from '@/api/api'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate } from '@tanstack/react-router'
 import { AdFormSchema } from '@tgc/packages'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-export function AdForm() {
+interface AdFormProps {
+  ad?: AdDto
+  onSubmitSuccess: () => void
+  onCancel: () => void
+}
+export function AdForm({ ad, onSubmitSuccess, onCancel }: AdFormProps) {
   const [categories, setCategories] = useState<CategoryDto[]>([])
   const [tags, setTags] = useState<TagDto[]>([])
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate({ from: '/ad/new' })
 
   const form = useForm<z.infer<typeof AdFormSchema>>({
     resolver: zodResolver(AdFormSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      price: 0,
-      owner: '',
-      picture: '',
-      location: '',
-      category: { id: 0, name: '' },
-      tags: [],
+      title: ad?.title || '',
+      description: ad?.description || '',
+      price: ad?.price || 0,
+      owner: ad?.owner || '',
+      picture: ad?.picture || '',
+      location: ad?.location || '',
+      category: ad?.category || { id: 0, name: '' },
+      tags: ad?.tags || [],
     },
   })
 
@@ -39,7 +42,7 @@ export function AdForm() {
         const tags = await fetchTags()
         setCategories(categories)
         setTags(tags)
-        setLoading(false) // Les données sont chargées
+        setLoading(false)
       }
       catch (error) {
         console.error('Erreur lors du chargement des données : ', error)
@@ -49,26 +52,34 @@ export function AdForm() {
     fetchData()
   }, [])
 
-  // Soumission du formulaire
   const onSubmit = async (values: z.infer<typeof AdFormSchema>) => {
-    try {
-      const parsedData = AdFormSchema.parse(values)
-      const preparedData = {
-        ...parsedData,
-        category: { id: Number(parsedData.category.id) },
-        tags: parsedData.tags?.map(tag => ({ id: tag.id })) || [],
-      }
-
-      await postAd(preparedData)
-
-      navigate({ to: '/', replace: true })
+    const parsedData = AdFormSchema.parse(values)
+    const preparedData = {
+      ...parsedData,
+      category: { id: Number(parsedData.category.id) },
+      tags: parsedData.tags?.map(tag => ({ id: tag.id })) || [],
     }
-    catch (error) {
-      console.error('Validation Error:', error)
+
+    if (ad) {
+      try {
+        await updateAd(ad.id, preparedData)
+        onSubmitSuccess()
+      }
+      catch (error) {
+        console.error('Erreur lors de la mise à jour de l\'annonce:', error)
+      }
+    }
+    else {
+      try {
+        await postAd(preparedData)
+        onSubmitSuccess()
+      }
+      catch (error) {
+        console.error('Erreur lors de la création de l\'annonce:', error)
+      }
     }
   }
 
-  // Si en cours de chargement, on affiche un message ou un spinner
   if (loading) {
     return <div>Chargement des données...</div> // Ou un spinner de chargement
   }
@@ -115,7 +126,7 @@ export function AdForm() {
                   type="number"
                   placeholder="Prix"
                   {...field}
-                  onChange={e => field.onChange(Number(e.target.valueAsNumber))}
+                  onChange={e => field.onChange(Number(e.target.value))}
                 />
               </FormControl>
               <FormMessage />
@@ -226,7 +237,8 @@ export function AdForm() {
           )}
         />
 
-        <Button type="submit">Envoyer</Button>
+        <Button type="submit">{ad ? 'Mettre à jour' : 'Créer'}</Button>
+        <Button type="button" onClick={onCancel}>Annuler</Button>
       </form>
     </Form>
   )
