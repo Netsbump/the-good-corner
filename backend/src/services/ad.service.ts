@@ -9,31 +9,24 @@ import { In } from 'typeorm'
 export class AdService {
   constructor(private readonly adsRepository: Repository<Ad>, private readonly categoryRepository: Repository<Category>, private readonly tagRepository: Repository<Tag>) {}
 
-  public async getAll(categoryIds?: string) {
-    try {
-      if (categoryIds) {
-        const categoryIdArray = categoryIds.split(',').map(id => Number.parseInt(id.trim(), 10))
+  public async getAll() {
+    return await this.adsRepository.find({
+      relations: ['category', 'tags'],
+    })
+  }
 
-        if (categoryIdArray.some(Number.isNaN)) {
-          throw new Error('Invalid category ID format')
-        }
+  async getAllByCategory(categoryIds: string) {
+    const categoryIdArray = categoryIds.split(',').map(id => Number.parseInt(id.trim(), 10))
 
-        return await this.adsRepository.find({
-          where: { category: { id: In(categoryIdArray) } }, // La clé doit être la propriété "id" de Category
-          relations: ['category', 'tags'],
-          order: { category: { id: 'ASC' } }, // Tri par ID de la catégorie
-        })
-      }
-      else {
-      // Récupérer toutes les annonces si aucun category_id n'est spécifié
-        return await this.adsRepository.find({
-          relations: ['category', 'tags'],
-        })
-      }
+    if (categoryIdArray.some(Number.isNaN)) {
+      throw new Error('Invalid category ID format')
     }
-    catch (error) {
-      throw new Error(`Failed to retrieve ads: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    }
+
+    return await this.adsRepository.find({
+      where: { category: { id: In(categoryIdArray) } },
+      relations: ['category', 'tags'],
+      order: { category: { id: 'ASC' } },
+    })
   }
 
   public async getById(id: number): Promise<Ad | null> {

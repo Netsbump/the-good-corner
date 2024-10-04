@@ -15,7 +15,7 @@ export function getFakeAds(): AdDtoToCreate[] {
       description: faker.lorem.sentence(),
       price: Number.parseFloat(faker.commerce.price()),
       owner: faker.person.firstName(),
-      picture: faker.image.url(),
+      picture: faker.image.dataUri({ width: 207, height: 190 }),
       location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
       category: faker.helpers.arrayElement([{ id: 1 }]),
       tags: faker.helpers.arrayElements([ // Générez un tableau de tags

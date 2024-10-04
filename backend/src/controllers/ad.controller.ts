@@ -1,8 +1,6 @@
+import type { AdDtoToCreate } from '@tgc/packages'
 import type { Request, Response } from 'express'
 import type { AdService } from '../services/ad.service'
-import type { AdType } from '../utils/types'
-// import { AdIdSchema, AdPatchSchema, AdSchema, querySchema } from '../schemas/ad.schema'
-import type { AdDto, AdDtoToCreate } from '@tgc/packages'
 import { AdPatchSchema, AdSchema, IdSchema, querySchema } from '@tgc/packages'
 
 export class AdController {
@@ -17,9 +15,12 @@ export class AdController {
         return res.status(400).json({ error: 'Invalid query parameters' })
       }
 
-      const categoryIds = parseResult.data.category_ids
+      const { category_ids } = parseResult.data
 
-      const ads = await this.adsService.getAll(categoryIds)
+      // 2. Récupérer les annonces
+      const ads = category_ids
+        ? await this.adsService.getAllByCategory(category_ids)
+        : await this.adsService.getAll()
 
       return res.status(200).json(ads)
     }
