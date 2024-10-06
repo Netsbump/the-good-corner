@@ -16,14 +16,16 @@ export function RecentAds() {
   }, [])
 
   return (
-    <section className="recent-ads">
-      {ads.map(ad => (
-        <div key={ad.id}>
-          <AdCard
-            data={ad}
-          />
-        </div>
-      ))}
+    <section className="container mx-auto px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+        {ads.map(ad => (
+          <div key={ad.id} className="w-full max-w-sm">
+            <AdCard
+              data={ad}
+            />
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

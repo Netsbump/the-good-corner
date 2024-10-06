@@ -75,22 +75,7 @@ export default {
     require('tailwindcss-animate'),
     function ({ addBase }) {
       addBase({
-        button: {
-          minWidth: '40px',
-          height: '40px',
-          padding: '8px',
-          borderRadius: '8px',
-          border: '2px solid #ffa41b',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '3px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          color: '#ffa41b',
-          backgroundColor: 'white',
-          cursor: 'pointer',
-        },
+
       })
     },
   ],

@@ -13,7 +13,11 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as MySearchesIndexImport } from './routes/my-searches.index'
+import { Route as MessagesIndexImport } from './routes/messages.index'
+import { Route as FavoritesIndexImport } from './routes/favorites.index'
 import { Route as AdsIndexImport } from './routes/ads.index'
+import { Route as AccountIndexImport } from './routes/account.index'
 import { Route as AdsAdIdImport } from './routes/ads.$adId'
 import { Route as AdNewImport } from './routes/ad.new'
 
@@ -34,8 +38,28 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const MySearchesIndexRoute = MySearchesIndexImport.update({
+  path: '/my-searches/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MessagesIndexRoute = MessagesIndexImport.update({
+  path: '/messages/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const FavoritesIndexRoute = FavoritesIndexImport.update({
+  path: '/favorites/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AdsIndexRoute = AdsIndexImport.update({
   path: '/ads/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AccountIndexRoute = AccountIndexImport.update({
+  path: '/account/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -81,11 +105,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdsAdIdImport
       parentRoute: typeof rootRoute
     }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/ads/': {
       id: '/ads/'
       path: '/ads'
       fullPath: '/ads'
       preLoaderRoute: typeof AdsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/favorites/': {
+      id: '/favorites/'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/messages/': {
+      id: '/messages/'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/my-searches/': {
+      id: '/my-searches/'
+      path: '/my-searches'
+      fullPath: '/my-searches'
+      preLoaderRoute: typeof MySearchesIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -98,7 +150,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/account': typeof AccountIndexRoute
   '/ads': typeof AdsIndexRoute
+  '/favorites': typeof FavoritesIndexRoute
+  '/messages': typeof MessagesIndexRoute
+  '/my-searches': typeof MySearchesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -106,7 +162,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/account': typeof AccountIndexRoute
   '/ads': typeof AdsIndexRoute
+  '/favorites': typeof FavoritesIndexRoute
+  '/messages': typeof MessagesIndexRoute
+  '/my-searches': typeof MySearchesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -115,15 +175,47 @@ export interface FileRoutesById {
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
+  '/account/': typeof AccountIndexRoute
   '/ads/': typeof AdsIndexRoute
+  '/favorites/': typeof FavoritesIndexRoute
+  '/messages/': typeof MessagesIndexRoute
+  '/my-searches/': typeof MySearchesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/ad/new'
+    | '/ads/$adId'
+    | '/account'
+    | '/ads'
+    | '/favorites'
+    | '/messages'
+    | '/my-searches'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads'
-  id: '__root__' | '/' | '/about' | '/ad/new' | '/ads/$adId' | '/ads/'
+  to:
+    | '/'
+    | '/about'
+    | '/ad/new'
+    | '/ads/$adId'
+    | '/account'
+    | '/ads'
+    | '/favorites'
+    | '/messages'
+    | '/my-searches'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/ad/new'
+    | '/ads/$adId'
+    | '/account/'
+    | '/ads/'
+    | '/favorites/'
+    | '/messages/'
+    | '/my-searches/'
   fileRoutesById: FileRoutesById
 }
 
@@ -132,7 +224,11 @@ export interface RootRouteChildren {
   AboutLazyRoute: typeof AboutLazyRoute
   AdNewRoute: typeof AdNewRoute
   AdsAdIdRoute: typeof AdsAdIdRoute
+  AccountIndexRoute: typeof AccountIndexRoute
   AdsIndexRoute: typeof AdsIndexRoute
+  FavoritesIndexRoute: typeof FavoritesIndexRoute
+  MessagesIndexRoute: typeof MessagesIndexRoute
+  MySearchesIndexRoute: typeof MySearchesIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -140,7 +236,11 @@ const rootRouteChildren: RootRouteChildren = {
   AboutLazyRoute: AboutLazyRoute,
   AdNewRoute: AdNewRoute,
   AdsAdIdRoute: AdsAdIdRoute,
+  AccountIndexRoute: AccountIndexRoute,
   AdsIndexRoute: AdsIndexRoute,
+  FavoritesIndexRoute: FavoritesIndexRoute,
+  MessagesIndexRoute: MessagesIndexRoute,
+  MySearchesIndexRoute: MySearchesIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -159,7 +259,11 @@ export const routeTree = rootRoute
         "/about",
         "/ad/new",
         "/ads/$adId",
-        "/ads/"
+        "/account/",
+        "/ads/",
+        "/favorites/",
+        "/messages/",
+        "/my-searches/"
       ]
     },
     "/": {
@@ -174,8 +278,20 @@ export const routeTree = rootRoute
     "/ads/$adId": {
       "filePath": "ads.$adId.tsx"
     },
+    "/account/": {
+      "filePath": "account.index.tsx"
+    },
     "/ads/": {
       "filePath": "ads.index.tsx"
+    },
+    "/favorites/": {
+      "filePath": "favorites.index.tsx"
+    },
+    "/messages/": {
+      "filePath": "messages.index.tsx"
+    },
+    "/my-searches/": {
+      "filePath": "my-searches.index.tsx"
     }
   }
 }
