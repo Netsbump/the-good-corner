@@ -17,7 +17,7 @@ export function getFakeAds(): AdDtoToCreate[] {
       owner: faker.person.firstName(),
       picture: faker.image.dataUri({ width: 207, height: 190 }),
       location: faker.helpers.arrayElement([PARIS, LYON, BORDEAUX]),
-      category: faker.helpers.arrayElement([{ id: 1 }]),
+      category: faker.helpers.arrayElement([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }, { id: 7 }, { id: 8 }]),
       tags: faker.helpers.arrayElements([ // Générez un tableau de tags
         { id: 1 },
         { id: 2 },
