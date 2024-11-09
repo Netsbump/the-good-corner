@@ -3,6 +3,12 @@ import { deleteAd, fetchAdById } from '@/api/api'
 import { AdForm } from '@/components/AdForm'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { ChevronRight, MapPin } from 'lucide-react'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/ads/$adId')({
   component: AdDetail,
@@ -73,47 +79,89 @@ function AdDetail() {
     <>
       {isEditing
         ? (
-            <AdForm ad={ad} onSubmitSuccess={handleUpdateSuccess} onCancel={handleCancelUpdate} />
-          )
+          <AdForm ad={ad} onSubmitSuccess={handleUpdateSuccess} onCancel={handleCancelUpdate} />
+        )
         : (
-            <div className="border-solid border-[1px] h-full border-black flex flex-col">
-              <img src={ad.picture} />
+          <div className="h-full flex flex-col w-full">
 
-              <h1>
+            <div className='flex w-full'>
+
+              <div className='w-2/3'>
+                <img src={ad.picture} />
+              </div>
+              <aside className="flex flex-col w-1/3 border border-slate-300 rounded-xl p-4 gap-2">
+                <div className='flex pb-6'>
+
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+
+                  <div className='flex flex-col justify-center items-start pl-6 w-full'>
+                    <p>{ad.owner}</p>
+                    <p> 1 annonces </p>
+                  </div>
+                  <div className='flex justify-end items-center'>
+                    <ChevronRight />
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className='pt-6 flex flex-col justify-center gap-3'>
+                  <Button className='bg-[#6F42C1] rounded-xl'>Acheter</Button>
+                  <Button className='bg-lime-600 rounded-xl'>Message</Button>
+                </div>
+              </aside>
+
+            </div>
+
+            <div className='gap-5 flex flex-col'>
+              <h1 className='font-bold'>
                 {ad.title}
               </h1>
+
               <div className="flex flex-col">
-                <h2>Description</h2>
+                <p className='font-bold'>{ad.price} €</p>
+              </div>
+
+              <Separator />
+
+              <div className="flex flex-col">
+                <h2 className='font-bold'>Description</h2>
                 <p>{ad.description}</p>
               </div>
 
-              <div className="flex flex-col">
-                <h2>Ville</h2>
+              <Separator />
+
+              <div className="flex">
+                <MapPin />
                 <p>{ad.location}</p>
               </div>
 
-              <div className="flex flex-col">
-                <h2>Vendeur</h2>
-                <p>{ad.owner}</p>
+              <Separator />
+
+              <div className='flex flex-col gap-3'>
+                <div className='flex'>
+                  {ad.tags && ad.tags.map(tag => (
+                    <p key={tag.id}>{tag.name}</p>
+                  ))}
+                </div>
+                <div>
+                  <Badge className='rounded-full bg-yellow-300'>{ad.category.name}</Badge>
+                </div>
               </div>
 
-              <div className="flex flex-col">
-                <h2>Prix</h2>
-                <p>{ad.price}</p>
-              </div>
+              <Separator />
 
-              <p className="border-solid border-[1px] border-yellow-200">{ad.category.name}</p>
-              {ad.tags && ad.tags.map(tag => (
-                <p key={tag.id}>{tag.name}</p>
-              ))}
-
-              <div className="flex">
-                <button onClick={() => handleDelete(ad.id)}>Supprimer l'annonce</button>
-                <button onClick={() => handleUpdate(ad.id, ad)}>Modifier l'annonce</button>
+              <div className="flex gap-5">
+                <Button className='bg-red-600 rounded-xl' onClick={() => handleDelete(ad.id)}>Supprimer l'annonce</Button>
+                <Button variant={'outline'} className='rounded-xl border-[#6F42C1] text-[#6F42C1]' onClick={() => handleUpdate(ad.id, ad)}>Modifier l'annonce</Button>
               </div>
 
             </div>
-          )}
+          </div>
+        )}
     </>
   )
 }
