@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ChevronRight, MapPin } from 'lucide-react'
-import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 
 export const Route = createFileRoute('/ads/$adId')({
