@@ -3,11 +3,19 @@ import type { Repository } from 'typeorm'
 import type { Ad } from '../entities/ad.entity'
 import type { Category } from '../entities/category.entity'
 import type { Tag } from '../entities/tag.entity'
-import type { AdType } from '../utils/types'
 import { In } from 'typeorm'
+import { Service, Inject } from 'typedi'
 
+@Service()
 export class AdService {
-  constructor(private readonly adsRepository: Repository<Ad>, private readonly categoryRepository: Repository<Category>, private readonly tagRepository: Repository<Tag>) {}
+  constructor(
+     @Inject("AdRepository") 
+     private readonly adsRepository: Repository<Ad>, 
+     @Inject("CategoryRepository") 
+     private readonly categoryRepository: Repository<Category>, 
+     @Inject("TagRepository") 
+     private readonly tagRepository: Repository<Tag>
+    ) {}
 
   public async getAll() {
     return await this.adsRepository.find({

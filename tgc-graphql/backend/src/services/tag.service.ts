@@ -1,9 +1,14 @@
 import type { TagDto } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Tag } from '../entities/tag.entity'
+import { Service, Inject } from 'typedi'
 
+@Service()
 export class TagService {
-  constructor(private readonly tagsRepository: Repository<Tag>) {}
+  constructor(
+    @Inject("TagRepository") 
+    private readonly tagsRepository: Repository<Tag>
+  ) {}
 
   public async getAll() {
     try {

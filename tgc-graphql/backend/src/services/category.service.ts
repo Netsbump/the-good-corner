@@ -1,10 +1,15 @@
 import type { CategoryDto } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Category } from '../entities/category.entity'
+import { Service, Inject } from 'typedi';
 
+@Service()
 export class CategoryService {
-  constructor(private readonly categoriesRepository: Repository<Category>) {}
-
+  constructor(
+    @Inject('CategoryRepository') 
+    private readonly categoriesRepository: Repository<Category>
+  ) {}
+  
   public async getAll(): Promise<Category[]> {
     try {
       return await this.categoriesRepository.find()
