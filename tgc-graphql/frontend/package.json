@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.11.10",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.2",
@@ -23,6 +24,7 @@
     "@tgc/packages": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "graphql": "^16.9.0",
     "ky": "^1.7.2",
     "lucide-react": "^0.446.0",
     "react": "^18.3.1",

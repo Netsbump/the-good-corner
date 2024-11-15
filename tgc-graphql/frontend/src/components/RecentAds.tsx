@@ -1,19 +1,19 @@
 import type { AdDto } from '@tgc/packages'
-import ky from 'ky'
-import { useEffect, useState } from 'react'
-import config from '../api/config'
 import { AdCard } from './AdCard'
+import { useQuery } from '@apollo/client'
+import { GET_ALL_ADS } from '@/api/api';
+
+type GetAllAdsResponse = {
+  ads: AdDto[];
+};
 
 export function RecentAds() {
-  const [ads, setAds] = useState<AdDto[]>([])
+  const { data, loading, error } = useQuery<GetAllAdsResponse>(GET_ALL_ADS);
 
-  useEffect(() => {
-    const fetchAds = async () => {
-      const adsFromApi = await ky.get<AdDto[]>(`${config.apiUrl}/ads`).json()
-      setAds(adsFromApi)
-    }
-    fetchAds()
-  }, [])
+  if (loading) return <p>Chargement des annonces...</p>;
+  if (error) return <p>Erreur: {error.message}</p>
+
+  const ads = data?.ads || [];
 
   return (
     <section className="container mx-auto px-4">

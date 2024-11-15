@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client'
 import type { AdDto, AdDtoToCreate, CategoryDto, TagDto } from '@tgc/packages'
 import config from '@/api/config'
 import ky from 'ky'
@@ -25,3 +26,76 @@ export async function deleteAd(id: number) {
 export async function updateAd(id: number, ad: AdDtoToCreate) {
   return await ky.put(`${config.apiUrl}/ads/${id}`, { json: ad }).json()
 }
+
+export const GET_AD = gql`
+  query Ad($adId: ID!) {
+    ad(id: $adId) {
+      id
+      title
+      description
+      price
+      owner
+      picture
+      location
+      category {
+        id
+        name
+      }
+      tags {
+        id
+        name
+      }
+    }
+  }
+`
+
+export const GET_ALL_CATEGORIES = gql`
+  query GetAllCategories {
+    getAllCategories {
+      name
+      id
+    }
+  }
+`;
+
+export const GET_ALL_ADS = gql`
+  query {
+    ads {
+      id
+      picture
+      price
+      title
+      tags {
+        id
+        name
+      }
+      category {
+        name
+      }
+    }
+  }
+`;
+
+export const GET_ADS = gql`
+  query Ads($categoryIds: [ID!]) {
+    ads(categoryIds: $categoryIds) {
+      id
+      picture
+      price
+      title
+      tags {
+        id
+        name
+      }
+      category {
+        name
+      }
+    }
+  }
+`;
+
+export const DELETE_AD = gql`
+  mutation deleteAd($id: ID!) {
+    deleteAd(id: $id)
+  }
+`;

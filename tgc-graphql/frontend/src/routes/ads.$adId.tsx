@@ -1,13 +1,18 @@
 import type { AdDto } from '@tgc/packages'
-import { deleteAd, fetchAdById } from '@/api/api'
+import { DELETE_AD, GET_AD, GET_ADS } from '@/api/api'
 import { AdForm } from '@/components/AdForm'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { useMutation, useQuery } from '@apollo/client'
+
+type GetAdResponse = {
+  ad: AdDto
+}
 
 export const Route = createFileRoute('/ads/$adId')({
   component: AdDetail,
@@ -16,28 +21,28 @@ export const Route = createFileRoute('/ads/$adId')({
 function AdDetail() {
   const navigate = Route.useNavigate()
   const { adId } = Route.useParams()
-  const isValidId = !Number.isNaN(Number(adId))
-  const [ad, setAd] = useState<AdDto | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [refreshData, setRefreshData] = useState(false)
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (isValidId) {
-        const adResult = await fetchAdById(Number(adId))
-        setAd(adResult)
-      }
-    }
-    fetch()
-  }, [adId, isValidId, refreshData])
+  const { data, loading, error, refetch } = useQuery<GetAdResponse>(GET_AD,
+    { variables: { adId: adId ? adId : null } }
+  );
 
+  const [deleteAdMutation, { loading: deleting }] = useMutation(DELETE_AD, {
+    refetchQueries: [{ query: GET_ADS }], // Recharge la query GET_ADS
+    onCompleted: () => {
+      navigate({ to: '/', replace: true });
+    },
+    onError: (error) => {
+      console.error('Erreur lors de la suppression :', error);
+    },
+  });
+  
   const handleDelete = async (id: number) => {
     try {
-      await deleteAd(id)
-      navigate({ to: '/', replace: true })
+      await deleteAdMutation({ variables: { id } });
     }
     catch (error) {
-      console.error('Deleted Error:', error)
+      console.error('Erreur dans handleDelete :', error);
     }
   }
 
@@ -50,28 +55,33 @@ function AdDetail() {
 
   const handleUpdateSuccess = () => {
     setIsEditing(false) // Désactiver le mode édition
-    setRefreshData((prev => !prev))
+    refetch();
   }
 
   const handleCancelUpdate = () => {
     setIsEditing(false) // Désactiver le mode édition
   }
 
-  if (!isValidId) {
+  if (loading) return <div>Chargement de l'annonce...</div>
+
+  if (error) {
     return (
       <div>
-        <h1>Invalid ad ID</h1>
-        <p>
-          The ad ID "
-          {adId}
-          " is not valid.
-        </p>
+        <h1>Erreur</h1>
+        <p>Impossible de récupérer l'annonce.</p>
       </div>
-    )
+    );
   }
 
+  const ad = data?.ad || null;
+
   if (!ad) {
-    return <div>Chargement des données...</div>
+    return (
+      <div>
+        <h1>Annonce introuvable</h1>
+        <p>L'annonce demandée n'existe pas ou a été supprimée.</p>
+      </div>
+    );
   }
 
   return (
@@ -154,7 +164,13 @@ function AdDetail() {
               <Separator />
 
               <div className="flex gap-5">
-                <Button className='bg-red-600 rounded-xl' onClick={() => handleDelete(ad.id)}>Supprimer l'annonce</Button>
+              <Button
+                className="bg-red-600 rounded-xl"
+                onClick={() => handleDelete(ad.id)}
+                disabled={deleting} // Désactive le bouton pendant la suppression
+              >
+                {deleting ? 'Suppression...' : 'Supprimer l\'annonce'}
+              </Button>
                 <Button variant={'outline'} className='rounded-xl border-[#6F42C1] text-[#6F42C1]' onClick={() => handleUpdate(ad.id, ad)}>Modifier l'annonce</Button>
               </div>
 

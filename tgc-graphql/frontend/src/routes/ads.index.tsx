@@ -1,9 +1,12 @@
 import type { AdDto } from '@tgc/packages'
-import config from '@/api/config'
 import { AdCard } from '@/components/AdCard'
 import { createFileRoute } from '@tanstack/react-router'
-import ky from 'ky'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { GET_ADS } from '@/api/api'
+
+type GetAllAdsResponse = {
+  ads: AdDto[];
+}
 
 export const Route = createFileRoute('/ads/')({
   validateSearch: search => ({
@@ -14,60 +17,25 @@ export const Route = createFileRoute('/ads/')({
 
 function AdsPage() {
   const { categoryId } = Route.useSearch() // Récupère les query params optionnels
-  const [isValidCategory, setIsValidCategory] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [ads, setAds] = useState<AdDto[]>([])
+  console.log(typeof categoryId)
+   // Appel GraphQL avec la variable categoryIds si categoryId est défini
+   const { data, loading, error } = useQuery<GetAllAdsResponse>(GET_ADS, {
+    variables: { categoryIds: categoryId ? [categoryId] : undefined },
+  });
 
-  useEffect(() => {
-    const fetchAds = async () => {
-      setLoading(true)
-      try {
-        if (categoryId) {
-          // Appel avec filtrage par catégorie
-          const listAds = await ky.get<AdDto[]>(`${config.apiUrl}/ads?category_ids=${categoryId}`).json()
-          setAds(listAds)
-          setIsValidCategory(true)
-        }
-        else {
-          // Appel sans catégorie
-          const adsFromApi = await ky.get<AdDto[]>(`${config.apiUrl}/ads`).json()
-          setAds(adsFromApi)
-        }
-      }
-      catch (error) {
-        if (categoryId) {
-          // Erreur spécifique à la catégorie
-          setIsValidCategory(false)
-        }
-        else {
-          // Erreur générale (réseau, serveur, etc.)
-          console.error('Erreur lors de la récupération des annonces', error)
-        }
-      }
-      finally {
-        setLoading(false)
-      }
-    }
 
-    fetchAds()
-  }, [categoryId])
+  if (loading) return <div>Chargement des annonces...</div>
 
-  if (loading) {
-    return <div>Chargement des annonces...</div>
-  }
-
-  if (categoryId && !isValidCategory) {
+  if (error) {
     return (
       <div>
-        <h1>Erreur : Catégorie invalide</h1>
-        <p>
-          La catégorie "
-          {categoryId}
-          " n'existe pas.
-        </p>
+        <h1>Erreur</h1>
+        <p>Impossible de récupérer les annonces.</p>
       </div>
-    )
+    );
   }
+
+  const ads = data?.ads || [];
 
   return (
     <>

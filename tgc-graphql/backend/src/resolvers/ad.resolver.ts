@@ -10,23 +10,16 @@ import { Service } from 'typedi';
 export class AdResolver {
   constructor(private readonly adsService: AdService) {}
 
-  // Query to get all ads with optional category filter
   @Query(() => [Ad])
-  public async getAllAds(@Arg("categoryIds", () => [ID], { nullable: true }) categoryIds?: number[]): Promise<Ad[]> {
-    const parseResult = querySchema.safeParse({ category_ids: categoryIds });
-    if (!parseResult.success) {
-      throw new Error('Invalid query parameters');
-    }
-
-    const { category_ids } = parseResult.data;
-    return category_ids
-      ? await this.adsService.getAllByCategory(category_ids)
-      : await this.adsService.getAll();
+  public async ads(
+    @Arg("categoryIds", () => [ID], { nullable: true }) categoryIds?: string[]
+  ): Promise<Ad[]> {
+    return this.adsService.getAll(categoryIds);
   }
 
   // Query to get an ad by ID
   @Query(() => Ad, { nullable: true })
-  public async getAdById(@Arg("id", () => ID) id: string): Promise<Ad | null> {
+  public async ad(@Arg("id", () => ID) id: string): Promise<Ad | null> {
     
     const numericId = Number(id);
     const parseAdId = IdSchema.safeParse(numericId);
@@ -105,8 +98,10 @@ export class AdResolver {
 
   // Mutation to delete an ad by ID
   @Mutation(() => Boolean)
-  public async deleteAdById(@Arg("id", () => ID) id: number): Promise<boolean> {
-    const parseAdId = IdSchema.safeParse(id);
+  public async deleteAd(@Arg("id", () => ID) id: string): Promise<boolean> {
+    const numericId = Number(id);
+    const parseAdId = IdSchema.safeParse(numericId);
+
     if (!parseAdId.success) {
       throw new Error('Invalid ID format');
     }
@@ -126,18 +121,4 @@ export class AdResolver {
     return true;
   }
 
-//   // Example query to get average price by category ID
-//   @Query(() => Number, { nullable: true })
-//   public async getAveragePriceByCategory(@Arg("categoryId", () => ID) categoryId: number): Promise<number | null> {
-//     if (isNaN(categoryId)) {
-//       throw new Error('Invalid Category ID format');
-//     }
-
-//     const averagePrice = await this.adsService.getAveragePriceByCategory(categoryId);
-//     if (averagePrice === null) {
-//       throw new Error('Category not found or no ads in this category');
-//     }
-
-//     return averagePrice;
-//   }
 }

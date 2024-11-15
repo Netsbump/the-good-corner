@@ -17,24 +17,18 @@ export class AdService {
      private readonly tagRepository: Repository<Tag>
   ) {}
 
-  public async getAll() {
-    return await this.adsRepository.find({
-      relations: ['category', 'tags'],
-    })
-  }
-
-  async getAllByCategory(categoryIds: string) {
-    const categoryIdArray = categoryIds.split(',').map(id => Number.parseInt(id.trim(), 10))
-
-    if (categoryIdArray.some(Number.isNaN)) {
-      throw new Error('Invalid category ID format')
+  public async getAll(categoryIds?: string[]): Promise<Ad[]> {
+    if (categoryIds && categoryIds.length > 0) {
+      return await this.adsRepository.find({
+        where: { category: { id: In(categoryIds) } },
+        relations: ['category', 'tags'],
+        order: { category: { id: 'ASC' } },
+      });
     }
 
     return await this.adsRepository.find({
-      where: { category: { id: In(categoryIdArray) } },
       relations: ['category', 'tags'],
-      order: { category: { id: 'ASC' } },
-    })
+    });
   }
 
   public async getById(id: number): Promise<Ad | null> {
