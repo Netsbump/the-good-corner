@@ -26,13 +26,17 @@ export class AdResolver {
 
   // Query to get an ad by ID
   @Query(() => Ad, { nullable: true })
-  public async getAdById(@Arg("id", () => ID) id: number): Promise<Ad | null> {
-    const parseAdId = IdSchema.safeParse(id);
+  public async getAdById(@Arg("id", () => ID) id: string): Promise<Ad | null> {
+    
+    const numericId = Number(id);
+    const parseAdId = IdSchema.safeParse(numericId);
+
     if (!parseAdId.success) {
       throw new Error('Invalid ID format');
     }
 
     const ad = await this.adsService.getById(parseAdId.data);
+    
     if (!ad) {
       throw new Error('Ad not found');
     }

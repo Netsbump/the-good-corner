@@ -15,7 +15,7 @@ export class AdService {
      private readonly categoryRepository: Repository<Category>, 
      @Inject("TagRepository") 
      private readonly tagRepository: Repository<Tag>
-    ) {}
+  ) {}
 
   public async getAll() {
     return await this.adsRepository.find({

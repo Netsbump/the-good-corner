@@ -1,4 +1,4 @@
-import { Arg, ID, Mutation, Query, Resolver,InputType, Field} from 'type-graphql';
+import { Arg, ID, Mutation, Query, Resolver } from 'type-graphql';
 import { Tag } from '../entities/tag.entity';
 import { TagService } from '../services/tag.service';
 import { IdSchema, TagSchema } from '@tgc/packages';

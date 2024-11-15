@@ -6,13 +6,13 @@ import { Service, Inject } from 'typedi';
 @Service()
 export class CategoryService {
   constructor(
-    @Inject('CategoryRepository') 
+    @Inject("CategoryRepository") 
     private readonly categoriesRepository: Repository<Category>
   ) {}
   
   public async getAll(): Promise<Category[]> {
     try {
-      return await this.categoriesRepository.find()
+      return await this.categoriesRepository.find({ relations: ['ads']})
     }
     catch (error) {
       throw new Error(`Failed to retrieve categories: ${error instanceof Error ? error.message : 'Unknown error'}`)

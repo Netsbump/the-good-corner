@@ -1,17 +1,16 @@
-
-import type { CategoryService } from '../services/category.service'
-import { CategorySchema, IdSchema } from '@tgc/packages'
 import { Arg, ID, Mutation, Query, Resolver } from 'type-graphql'
 import { Category } from '../entities/category.entity'
+import { CategoryService } from '../services/category.service'
+import { CategorySchema, IdSchema } from '@tgc/packages'
 import { CategoryInput } from '../inputs/category.input'
 import { Service } from 'typedi';
 
 @Service()
-@Resolver(of => Category)
+@Resolver(() => Category)
 export class CategoryResolver {
   constructor(private readonly categoriesService: CategoryService) {}
 
-  @Query(returns => [Category], {nullable: true})
+  @Query(() => [Category])
   public async getAllCategories(): Promise<Category[]> {
     try {
       return await this.categoriesService.getAll()
@@ -21,7 +20,7 @@ export class CategoryResolver {
     }
   }
 
-  @Query(returns=> Category, { nullable: true })
+  @Query(() => Category, { nullable: true })
   public async getCategoryById(@Arg("id", () => ID) id: number): Promise<Category | null> {
    
     const parsedId = IdSchema.safeParse(id);
@@ -36,9 +35,9 @@ export class CategoryResolver {
     }
 
     return category
-    }
+  }
 
-  @Mutation(returns => Category, { nullable: true })
+  @Mutation(()  => Category, { nullable: true })
   public async createCategory(@Arg("categoryData") categoryData: CategoryInput): Promise<Category> {
     const parseCategory = CategorySchema.safeParse(categoryData);
 
@@ -49,7 +48,7 @@ export class CategoryResolver {
     return await this.categoriesService.create(parseCategory.data);
   }
 
-  @Mutation(returns => Category, { nullable: true })
+  @Mutation(()  => Category, { nullable: true })
   public async updateCategory(
     @Arg("id", () => ID) id: number,
     @Arg("categoryData", () => CategoryInput) categoryData: CategoryInput
@@ -75,7 +74,7 @@ export class CategoryResolver {
   }
 
   // Mutation to delete a category by ID
-  @Mutation(returns => Boolean)
+  @Mutation(()  => Boolean)
   public async deleteCategoryById(@Arg("id", () => ID) id: number): Promise<boolean> {
     const parseId = IdSchema.safeParse(id);
 

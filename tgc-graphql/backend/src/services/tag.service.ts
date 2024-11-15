@@ -12,7 +12,7 @@ export class TagService {
 
   public async getAll() {
     try {
-      return await this.tagsRepository.find()
+      return await this.tagsRepository.find({ relations: ["ads"]})
     }
     catch (error) {
       throw new Error(`Failed to retrieve tags: ${error instanceof Error ? error.message : 'Unknown error'}`)
