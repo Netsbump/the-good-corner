@@ -1,16 +1,11 @@
-import type { AdDto } from '@tgc/packages'
 import { AdCard } from '@/components/AdCard'
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@apollo/client'
 import { GET_ADS } from '@/api/api'
 
-type GetAllAdsResponse = {
-  ads: AdDto[];
-}
-
 export const Route = createFileRoute('/ads/')({
   validateSearch: search => ({
-    categoryId: search.categoryId ? Number(search.categoryId) : undefined, // Valide le search param
+    categoryId: search.categoryId ? search.categoryId.toString() : undefined, // Valide le search param
   }),
   component: AdsPage,
 })
@@ -19,7 +14,7 @@ function AdsPage() {
   const { categoryId } = Route.useSearch() // Récupère les query params optionnels
   console.log(typeof categoryId)
    // Appel GraphQL avec la variable categoryIds si categoryId est défini
-   const { data, loading, error } = useQuery<GetAllAdsResponse>(GET_ADS, {
+   const { data, loading, error } = useQuery(GET_ADS, {
     variables: { categoryIds: categoryId ? [categoryId] : undefined },
   });
 

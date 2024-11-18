@@ -1,33 +1,6 @@
-import { gql } from '@apollo/client'
-import type { AdDto, AdDtoToCreate, CategoryDto, TagDto } from '@tgc/packages'
-import config from '@/api/config'
-import ky from 'ky'
+import { graphql } from '@/gql';
 
-export async function fetchCategories() {
-  return await ky.get<CategoryDto[]>(`${config.apiUrl}/categories`).json()
-}
-
-export async function fetchTags() {
-  return await ky.get<TagDto[]>(`${config.apiUrl}/tags`).json()
-}
-
-export async function fetchAdById(id: number) {
-  return await ky.get<AdDto>(`${config.apiUrl}/ads/${id}`).json()
-}
-
-export async function postAd(ad: AdDtoToCreate) {
-  return await ky.post<AdDto>(`${config.apiUrl}/ads`, { json: ad }).json()
-}
-
-export async function deleteAd(id: number) {
-  return await ky.delete(`${config.apiUrl}/ads/${id}`).json()
-}
-
-export async function updateAd(id: number, ad: AdDtoToCreate) {
-  return await ky.put(`${config.apiUrl}/ads/${id}`, { json: ad }).json()
-}
-
-export const GET_AD = gql`
+export const GET_AD = graphql(`
   query Ad($adId: ID!) {
     ad(id: $adId) {
       id
@@ -47,18 +20,18 @@ export const GET_AD = gql`
       }
     }
   }
-`
+`)
 
-export const GET_ALL_CATEGORIES = gql`
-  query GetAllCategories {
-    getAllCategories {
+export const GET_ALL_CATEGORIES = graphql(`
+  query Categories {
+    categories {
       name
       id
     }
   }
-`;
+`);
 
-export const GET_ALL_ADS = gql`
+export const GET_ALL_ADS = graphql(`
   query {
     ads {
       id
@@ -74,9 +47,9 @@ export const GET_ALL_ADS = gql`
       }
     }
   }
-`;
+`);
 
-export const GET_ADS = gql`
+export const GET_ADS = graphql(`
   query Ads($categoryIds: [ID!]) {
     ads(categoryIds: $categoryIds) {
       id
@@ -92,10 +65,49 @@ export const GET_ADS = gql`
       }
     }
   }
-`;
+`);
 
-export const DELETE_AD = gql`
+export const DELETE_AD = graphql(`
   mutation deleteAd($id: ID!) {
     deleteAd(id: $id)
   }
-`;
+`);
+
+export const UPDATE_AD = graphql(`
+mutation updateAd($adData: AdInput!, $updateAdId: ID!) {
+  updateAd(adData: $adData, id: $updateAdId) {
+    title
+    price
+    owner
+    picture
+    location
+    category {
+      id
+    }
+  }
+}
+`);
+
+export const CREATE_AD = graphql(`
+mutation createAd($adData: AdInput!) {
+  createAd(adData: $adData) {
+    title
+    owner
+    price
+    picture
+    location
+    category {
+      id
+    }
+  }
+}
+`);
+
+export const GET_TAGS = graphql(`
+  query Tags {
+    tags {
+      name
+      id
+    }
+  }
+`);

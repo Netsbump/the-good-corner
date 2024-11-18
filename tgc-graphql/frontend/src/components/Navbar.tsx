@@ -1,4 +1,3 @@
-import type { CategoryDto } from '@tgc/packages'
 import { capitalizeFirstLetter } from '@/lib/utils'
 import { Link } from '@tanstack/react-router'
 import { Dot } from 'lucide-react'
@@ -7,18 +6,14 @@ import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { useQuery } from '@apollo/client'
 import { GET_ALL_CATEGORIES } from '@/api/api'
 
-type GetAllCategoriesResponse = {
-  getAllCategories: CategoryDto[]
-}
-
 export function Navbar() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const { data, loading, error } = useQuery<GetAllCategoriesResponse>(GET_ALL_CATEGORIES);
+  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES);
 
   if (loading) return <p>...</p>;
   if (error) return <p>erreur: {error.message}</p>
 
-  const categories = data?.getAllCategories || [];
+  const categories = data?.categories || [];
 
   const handleCategoryClick = (categoryName: string) => {
     setActiveCategory(categoryName)

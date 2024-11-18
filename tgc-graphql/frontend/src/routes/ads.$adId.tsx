@@ -1,4 +1,3 @@
-import type { AdDto } from '@tgc/packages'
 import { DELETE_AD, GET_AD, GET_ADS } from '@/api/api'
 import { AdForm } from '@/components/AdForm'
 import { createFileRoute } from '@tanstack/react-router'
@@ -9,10 +8,7 @@ import { Separator } from '@/components/ui/separator'
 import { ChevronRight, MapPin } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { useMutation, useQuery } from '@apollo/client'
-
-type GetAdResponse = {
-  ad: AdDto
-}
+import { AdQuery } from '@/gql/graphql'
 
 export const Route = createFileRoute('/ads/$adId')({
   component: AdDetail,
@@ -23,8 +19,8 @@ function AdDetail() {
   const { adId } = Route.useParams()
   const [isEditing, setIsEditing] = useState(false)
 
-  const { data, loading, error, refetch } = useQuery<GetAdResponse>(GET_AD,
-    { variables: { adId: adId ? adId : null } }
+  const { data, loading, error, refetch } = useQuery<AdQuery>(GET_AD,
+    { variables: { adId: adId } }
   );
 
   const [deleteAdMutation, { loading: deleting }] = useMutation(DELETE_AD, {
@@ -37,20 +33,13 @@ function AdDetail() {
     },
   });
   
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteAdMutation({ variables: { id } });
     }
     catch (error) {
       console.error('Erreur dans handleDelete :', error);
     }
-  }
-
-  const handleUpdate = async (id: number, ad: AdDto) => {
-    // todo route modifyAd ou updateAd qui appelle le composant FormAd
-    console.warn(id)
-    console.warn(ad)
-    setIsEditing(true)
   }
 
   const handleUpdateSuccess = () => {
@@ -171,7 +160,7 @@ function AdDetail() {
               >
                 {deleting ? 'Suppression...' : 'Supprimer l\'annonce'}
               </Button>
-                <Button variant={'outline'} className='rounded-xl border-[#6F42C1] text-[#6F42C1]' onClick={() => handleUpdate(ad.id, ad)}>Modifier l'annonce</Button>
+                <Button variant={'outline'} className='rounded-xl border-[#6F42C1] text-[#6F42C1]' onClick={() =>  setIsEditing(true)}>Modifier l'annonce</Button>
               </div>
 
             </div>

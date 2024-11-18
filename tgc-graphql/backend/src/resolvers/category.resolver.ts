@@ -11,7 +11,7 @@ export class CategoryResolver {
   constructor(private readonly categoriesService: CategoryService) {}
 
   @Query(() => [Category])
-  public async getAllCategories(): Promise<Category[]> {
+  public async categories(): Promise<Category[]> {
     try {
       return await this.categoriesService.getAll()
     }
@@ -21,7 +21,7 @@ export class CategoryResolver {
   }
 
   @Query(() => Category, { nullable: true })
-  public async getCategoryById(@Arg("id", () => ID) id: number): Promise<Category | null> {
+  public async category(@Arg("id", () => ID) id: number): Promise<Category | null> {
    
     const parsedId = IdSchema.safeParse(id);
 
@@ -75,7 +75,7 @@ export class CategoryResolver {
 
   // Mutation to delete a category by ID
   @Mutation(()  => Boolean)
-  public async deleteCategoryById(@Arg("id", () => ID) id: number): Promise<boolean> {
+  public async deleteCategory(@Arg("id", () => ID) id: number): Promise<boolean> {
     const parseId = IdSchema.safeParse(id);
 
     if (!parseId.success) {

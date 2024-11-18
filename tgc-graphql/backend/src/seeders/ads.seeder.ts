@@ -43,7 +43,7 @@ export async function seedAds() {
     ad.location = adData.location
 
     // Trouver la catégorie correspondante et l'associer à l'annonce
-    const category = categoryMap.get(adData.category.id)
+    const category = categoryMap.get(Number(adData.category.id))
     if (!category) {
       throw new Error(`Category with ID ${adData.category} not found`)
     }

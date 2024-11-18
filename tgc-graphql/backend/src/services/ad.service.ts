@@ -5,6 +5,7 @@ import type { Category } from '../entities/category.entity'
 import type { Tag } from '../entities/tag.entity'
 import { In } from 'typeorm'
 import { Service, Inject } from 'typedi'
+import { AdInput } from '../inputs/ad.input'
 
 @Service()
 export class AdService {
@@ -39,7 +40,7 @@ export class AdService {
     return ad || null
   }
 
-  public async create(ad: AdDtoToCreate): Promise<Ad> {
+  public async create(ad: AdInput): Promise<Ad> {
     try {
       const newAd = this.adsRepository.create()
       newAd.title = ad.title
@@ -50,7 +51,8 @@ export class AdService {
       newAd.owner = ad.owner
       newAd.picture = ad.picture
       newAd.location = ad.location
-      newAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
+      const categoryId = Number(ad.category.id)
+      newAd.category = await this.categoryRepository.findOneByOrFail({ id: categoryId })
 
       // Vérification et ajout des tags
       if (ad.tags && ad.tags.length > 0) {
@@ -75,7 +77,7 @@ export class AdService {
     }
   }
 
-  public async update(id: number, ad: AdDtoToCreate): Promise<Ad | null> {
+  public async update(id: number, ad: AdInput): Promise<Ad | null> {
     try {
       const updateAd = await this.adsRepository.findOneBy({ id })
 
@@ -91,7 +93,8 @@ export class AdService {
       updateAd.owner = ad.owner
       updateAd.picture = ad.picture
       updateAd.location = ad.location
-      updateAd.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
+      const categoryId = Number(ad.category.id)
+      updateAd.category = await this.categoryRepository.findOneByOrFail({ id: categoryId })
 
       await this.adsRepository.save(updateAd)
 
@@ -99,29 +102,6 @@ export class AdService {
     }
     catch (error) {
       throw new Error(`Failed to update ad : ${error instanceof Error ? error.message : error}`)
-    }
-  }
-
-  public async partialUpdate(id: number, ad: Partial<AdDtoToCreate>): Promise<Ad | null> {
-    try {
-      const adToUpdate = await this.adsRepository.findOneBy({ id })
-
-      if (!adToUpdate) {
-        return null
-      }
-
-      if (ad.category) {
-        adToUpdate.category = await this.categoryRepository.findOneByOrFail({ id: ad.category.id })
-      }
-
-      Object.assign(adToUpdate, ad)
-
-      await this.adsRepository.save(adToUpdate)
-
-      return adToUpdate
-    }
-    catch (error) {
-      throw new Error(`Failed to update ad: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 

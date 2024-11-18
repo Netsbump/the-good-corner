@@ -1,9 +1,9 @@
-import type { AdDto } from '@tgc/packages'
 import { Link } from '@tanstack/react-router'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card'
+import { AdsQuery } from '@/gql/graphql'
 
 interface AdCardProps {
-  data: AdDto
+  data: AdsQuery['ads'][number]; // Type correspondant à un seul élément de "ads"
 }
 
 export function AdCard({ data }: AdCardProps) {

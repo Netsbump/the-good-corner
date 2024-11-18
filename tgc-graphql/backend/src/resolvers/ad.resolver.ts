@@ -2,7 +2,7 @@ import { Arg, ID, Mutation, Query, Resolver, Field, InputType, Float } from 'typ
 import { Ad } from '../entities/ad.entity';
 import { AdService } from '../services/ad.service';
 import { AdPatchSchema, AdSchema, IdSchema, querySchema } from '@tgc/packages';
-import { AdInput, PartialAdInput } from '../inputs/ad.input';
+import { AdInput } from '../inputs/ad.input';
 import { Service } from 'typedi';
 
 @Service()
@@ -40,12 +40,12 @@ export class AdResolver {
   // Mutation to create a new ad
   @Mutation(() => Ad)
   public async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
-    const parseAd = AdSchema.safeParse(adData);
-    if (!parseAd.success) {
-      throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
-    }
+    // const parseAd = AdSchema.safeParse(adData);
+    // if (!parseAd.success) {
+    //   throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
+    // }
 
-    return await this.adsService.create(parseAd.data);
+    return await this.adsService.create(adData);
   }
 
   // Mutation to update an existing ad
@@ -54,41 +54,19 @@ export class AdResolver {
     @Arg("id", () => ID) id: number,
     @Arg("adData", () => AdInput) adData: AdInput
   ): Promise<Ad | null> {
-    const parseUpdateAdId = IdSchema.safeParse(id);
+
+    const numericId = Number(id);
+    const parseUpdateAdId = IdSchema.safeParse(numericId);
     if (!parseUpdateAdId.success) {
       throw new Error('Invalid ID format');
     }
 
-    const parseAd = AdSchema.safeParse(adData);
-    if (!parseAd.success) {
-      throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
-    }
+    // const parseAd = AdSchema.safeParse(adData);
+    // if (!parseAd.success) {
+    //   throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
+    // }
 
-    const updatedAd = await this.adsService.update(parseUpdateAdId.data, parseAd.data);
-    if (!updatedAd) {
-      throw new Error('Ad not found');
-    }
-
-    return updatedAd;
-  }
-
-  // Mutation to partially update an ad
-  @Mutation(() => Ad, { nullable: true })
-  public async partialUpdateAd(
-    @Arg("id", () => ID) id: number,
-    @Arg("updateFields", () => PartialAdInput) updateFields: PartialAdInput
-  ): Promise<Ad | null> {
-    const parseUpdateAdId = IdSchema.safeParse(id);
-    if (!parseUpdateAdId.success) {
-      throw new Error('Invalid ID format');
-    }
-
-    const parsePartialAd = AdPatchSchema.safeParse(updateFields);
-    if (!parsePartialAd.success) {
-      throw new Error(`Invalid partial Ad format: ${parsePartialAd.error.errors.map(e => e.message).join(", ")}`);
-    }
-
-    const updatedAd = await this.adsService.partialUpdate(parseUpdateAdId.data, parsePartialAd.data);
+    const updatedAd = await this.adsService.update(parseUpdateAdId.data, adData);
     if (!updatedAd) {
       throw new Error('Ad not found');
     }

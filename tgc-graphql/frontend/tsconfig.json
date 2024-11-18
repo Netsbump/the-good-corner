@@ -4,8 +4,13 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tgc/packages/*": ["../packages/*"] // Chemin relatif vers ton package partagé
-
-    }
+    },
+    "plugins": [
+      {
+        "name": "@0no-co/graphqlsp",
+        "schema": "./schema.graphql"
+      }
+    ]
   },
   "references": [
     { "path": "./tsconfig.app.json" },

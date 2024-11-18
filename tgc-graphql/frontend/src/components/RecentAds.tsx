@@ -1,14 +1,12 @@
-import type { AdDto } from '@tgc/packages'
+
 import { AdCard } from './AdCard'
 import { useQuery } from '@apollo/client'
-import { GET_ALL_ADS } from '@/api/api';
+import { GET_ADS } from '@/api/api';
+import { AdsQuery } from '@/gql/graphql';
 
-type GetAllAdsResponse = {
-  ads: AdDto[];
-};
 
 export function RecentAds() {
-  const { data, loading, error } = useQuery<GetAllAdsResponse>(GET_ALL_ADS);
+  const { data, loading, error } = useQuery<AdsQuery>(GET_ADS);
 
   if (loading) return <p>Chargement des annonces...</p>;
   if (error) return <p>Erreur: {error.message}</p>

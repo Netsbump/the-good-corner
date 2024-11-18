@@ -12,7 +12,7 @@ export const AdSchema  = z.object({
   picture: z.string().url({ message: "L'URL de l'image est invalide." }),
   location: z.string().min(2, { message: 'La localisation doit avoir au moins 2 caractères.' }),
   category: z.object({
-    id: IdSchema,
+    id: z.string(),
   }),
   tags: z.array(
     z.object({
@@ -24,7 +24,7 @@ export const AdSchema  = z.object({
 // Schéma pour le formulaire côté frontend
 export const AdFormSchema = AdSchema.extend({
   category: z.object({
-    id: IdSchema,
+    id: z.string(),
     name: z.string().min(1, { message: 'La catégorie doit avoir un nom' }),
   }),
   tags: z.array(

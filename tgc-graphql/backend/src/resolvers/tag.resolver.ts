@@ -12,7 +12,7 @@ export class TagResolver {
 
   // Query to get all tags
   @Query(() => [Tag])
-  public async getAllTags(): Promise<Tag[]> {
+  public async tags(): Promise<Tag[]> {
     try {
       return await this.tagsService.getAll();
     } catch (error) {
@@ -58,7 +58,7 @@ export class TagResolver {
 
   // Mutation to delete a tag by ID
   @Mutation(() => Boolean)
-  public async deleteTagById(@Arg("id", () => ID) id: number): Promise<boolean> {
+  public async deleteTag(@Arg("id", () => ID) id: number): Promise<boolean> {
     const parsedId = IdSchema.safeParse(id);
     if (!parsedId.success) {
       throw new Error('Invalid ID format');
