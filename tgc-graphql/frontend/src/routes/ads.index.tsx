@@ -15,7 +15,7 @@ function AdsPage() {
   console.log(typeof categoryId)
    // Appel GraphQL avec la variable categoryIds si categoryId est défini
    const { data, loading, error } = useQuery(GET_ADS, {
-    variables: { categoryIds: categoryId ? [categoryId] : undefined },
+    variables: { categoryIds: categoryId ? [categoryId] : null },
   });
 
 
