@@ -1,0 +1,8 @@
+node_modules
+
+# Environnement
+.env
+
+# Mais garder les exemples
+!.env.example
+

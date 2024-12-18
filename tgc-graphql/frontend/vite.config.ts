@@ -12,4 +12,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  server: {
+    host: true, // écoute sur toutes les interfaces réseau (0.0.0.0)
+  },
 })

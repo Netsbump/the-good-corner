@@ -11,8 +11,6 @@ import { Category } from './entities/category.entity'
 import { Tag } from './entities/tag.entity'
 import Container from 'typedi'
 
-const PORT = 3000
-
 export async function initializeApp() {
 
 //Initialize Apollo Server
