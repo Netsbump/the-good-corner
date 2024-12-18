@@ -26,7 +26,7 @@ export class Ad extends BaseEntity {
   @Field()
   owner!: string
 
-  @Column({ type: 'blob' })
+  @Column({ type: 'text' })
   @Field()
   picture!: string
 
