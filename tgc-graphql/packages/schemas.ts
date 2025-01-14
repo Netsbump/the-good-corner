@@ -58,3 +58,8 @@ export const TagSchema = z.object({
   name: NonEmptyStringScheam
 })
 
+// Schéma de base pour User
+export const UserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, { message: 'Le mot de passe doit contenir au moins 8 caractères.' }),
+})

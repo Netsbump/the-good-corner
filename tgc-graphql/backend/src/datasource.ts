@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm'
 import { Ad } from './entities/ad.entity'
 import { Category } from './entities/category.entity'
 import { Tag } from './entities/tag.entity'
+import { User } from './entities/user.entity'
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -10,7 +11,7 @@ export const dataSource = new DataSource({
   username: process.env.POSTGRES_USER || 'postgres',
   password: process.env.POSTGRES_PASSWORD || 'example',
   database: process.env.POSTGRES_DB || 'tgc',
-  entities: [Ad, Category, Tag],
+  entities: [Ad, Category, Tag, User],
   synchronize: true,
   logging: true,
 })
