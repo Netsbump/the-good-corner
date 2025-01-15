@@ -4,6 +4,9 @@ import { AdService } from '../services/ad.service';
 import { AdPatchSchema, AdSchema, IdSchema, querySchema } from '@tgc/packages';
 import { AdInput } from '../inputs/ad.input';
 import { Service } from 'typedi';
+import { Authorized } from 'type-graphql';
+import { Ctx } from 'type-graphql';
+import { AuthContext } from '../types/auth-checker';
 
 @Service()
 @Resolver(() => Ad)
@@ -38,14 +41,13 @@ export class AdResolver {
   }
 
   // Mutation to create a new ad
+  @Authorized()
   @Mutation(() => Ad)
-  public async createAd(@Arg("adData") adData: AdInput): Promise<Ad> {
-    // const parseAd = AdSchema.safeParse(adData);
-    // if (!parseAd.success) {
-    //   throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
-    // }
-
-    return await this.adsService.create(adData);
+  async createAd(
+    @Arg("adData") adData: AdInput,
+    @Ctx() { user }: AuthContext
+  ): Promise<Ad> {
+    return this.adsService.create(adData, user!.userId);
   }
 
   // Mutation to update an existing ad
@@ -60,11 +62,6 @@ export class AdResolver {
     if (!parseUpdateAdId.success) {
       throw new Error('Invalid ID format');
     }
-
-    // const parseAd = AdSchema.safeParse(adData);
-    // if (!parseAd.success) {
-    //   throw new Error(`Invalid Ad format: ${parseAd.error.errors.map(e => e.message).join(", ")}`);
-    // }
 
     const updatedAd = await this.adsService.update(parseUpdateAdId.data, adData);
     if (!updatedAd) {

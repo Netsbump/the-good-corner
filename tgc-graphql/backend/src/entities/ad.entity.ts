@@ -1,7 +1,8 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { Category } from './category.entity'
 import { Tag } from './tag.entity'
 import { Field, ID, ObjectType } from 'type-graphql'
+import { User } from './user.entity'
 
 @Entity()
 @ObjectType()
@@ -10,27 +11,23 @@ export class Ad extends BaseEntity {
   @Field(() => ID)
   id!: number
 
-  @Column({ type: 'text' })
+  @Column()
   @Field()
   title!: string
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ nullable: true })
   @Field({ nullable: true })
   description!: string
 
-  @Column({ type: 'real' })
+  @Column()
   @Field()
   price!: number
 
-  @Column({ type: 'text' })
-  @Field()
-  owner!: string
-
-  @Column({ type: 'text' })
+  @Column()
   @Field()
   picture!: string
 
-  @Column({ type: 'text' })
+  @Column()
   @Field()
   location!: string
 
@@ -43,7 +40,15 @@ export class Ad extends BaseEntity {
   @Field(() => [Tag])
   tags!: Tag[]
 
-  @CreateDateColumn({ type: 'text', default: () => 'CURRENT_TIMESTAMP' })
+  @ManyToOne(() => User, user => user.ads)
+  @Field(() => User)
+  author!: User 
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @Field() 
-  createdAt!: string
+  createdAt!: Date
+
+  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Field()
+  updatedAt!: Date
 }

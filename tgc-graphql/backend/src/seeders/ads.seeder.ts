@@ -2,21 +2,26 @@ import { dataSource } from '../datasource'
 import { Ad } from '../entities/ad.entity'
 import { Category } from '../entities/category.entity'
 import { Tag } from '../entities/tag.entity'
+import { User } from '../entities/user.entity'
 import { getFakeAds } from '../utils/faker.ads'
+import { seedUsers } from './users.seeder'
 
 export async function seedAds() {
   const adRepository = dataSource.getRepository(Ad)
   const categoryRepository = dataSource.getRepository(Category)
   const tagRepository = dataSource.getRepository(Tag)
 
-  // Vérifier s'il y a déjà des annonces dans la base de données
+  // Vérifier s'il y a déjà des annonces
   const adCount = await adRepository.count()
   if (adCount > 0) {
     console.warn('Ads already exist, skipping faker data generation.')
     return
   }
 
-  // Récupérer toutes les catégories
+  // S'assurer d'avoir un utilisateur par défaut
+  const defaultUser = await seedUsers()
+
+  // Récupérer les catégories et tags
   const categories = await categoryRepository.find()
   const categoryMap = new Map<number, Category>()
   categories.forEach((category) => {
@@ -38,31 +43,35 @@ export async function seedAds() {
       ad.description = adData.description
     }
     ad.price = adData.price
-    ad.owner = adData.owner
     ad.picture = adData.picture
     ad.location = adData.location
+    if (defaultUser) {
+      ad.author = defaultUser
+    } else {
+      throw new Error('Default user not found')
+    }
 
-    // Trouver la catégorie correspondante et l'associer à l'annonce
+    // Associer la catégorie
     const category = categoryMap.get(Number(adData.category.id))
     if (!category) {
-      throw new Error(`Category with ID ${adData.category} not found`)
+      throw new Error(`Category with ID ${adData.category.id} not found`)
     }
     ad.category = category
 
+    // Associer les tags
     const adTags = adData.tags?.map((tagData) => {
-      const tag = tagMap.get(tagData.id)
+      const tag = tagMap.get(Number(tagData.id))
       if (!tag) {
         throw new Error(`Tag with ID ${tagData.id} not found`)
       }
       return tag
-    }) || [] // Si aucun tag n'est présent, retourne un tableau vide
+    }) || []
 
-    ad.tags = adTags // Associe tous les tags trouvés à l'annonce
+    ad.tags = adTags
 
     return ad
   })
 
-  await adRepository.save(ads) // Enregistrer les annonces dans la base de données
-
+  await adRepository.save(ads)
   console.warn('Fake ads have been inserted.')
 }

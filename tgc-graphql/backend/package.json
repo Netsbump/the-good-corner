@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node-dev ./src/index.ts",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "reset:db": "ts-node ./src/scripts/resetDb.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",

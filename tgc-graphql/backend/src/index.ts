@@ -3,6 +3,7 @@ import { dataSource } from './datasource'
 import { seedAds } from './seeders/ads.seeder'
 import { seedCategories } from './seeders/categories.seeder'
 import { seedTags } from './seeders/tags.seeder'
+import { seedUsers } from './seeders/users.seeder'
 import Container from 'typedi'
 import { buildSchema } from 'type-graphql'
 import { AdResolver } from './resolvers/ad.resolver'
@@ -30,10 +31,11 @@ async function bootstrap() {
     await dataSource.initialize()
     console.warn('DataSource has been initialized')
 
-    // Seeds Database
-    await seedTags()
-    await seedCategories()
-    await seedAds()
+    // Seeds Database dans l'ordre
+    await seedUsers()    // D'abord les utilisateurs
+    await seedTags()     // Puis les tags
+    await seedCategories() // Puis les catégories
+    await seedAds()      // Enfin les annonces
 
     // Initialize and build app (Express)
     //await initializeApp()

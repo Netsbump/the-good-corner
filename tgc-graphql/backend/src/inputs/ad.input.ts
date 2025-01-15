@@ -15,7 +15,7 @@ export class AdInput {
   price!: number;
 
   @Field()
-  owner!: string;
+  author!: string;
 
   @Field()
   picture!: string;
@@ -36,13 +36,27 @@ export class AdCreateInput {
   @MinLength(2, { message: 'Le titre doit avoir au moins 2 caractères.' })
   title!: string;
 
+  @Field({ nullable: true })
+  description?: string;
+
   @Field()
   @IsNumber()
   @Min(1, { message: 'Le prix doit être supérieur à 0.' })
   price!: number;
+
+  @Field()
+  author!: string;
   
   @Field()
   @IsUrl(undefined, { message: "L'URL de l'image est invalide." })
   picture!: string;
 
+  @Field()
+  location!: string;  
+
+  @Field()
+  category!: CategoryInput;
+
+  @Field(() => [TagInput], { nullable: true })
+  tags?: TagInput[];
 }
