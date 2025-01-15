@@ -50,7 +50,7 @@ export class AdResolver {
     return this.adsService.create(adData, user!.userId);
   }
 
-  // Mutation to update an existing ad
+  @Authorized()
   @Mutation(() => Ad, { nullable: true })
   public async updateAd(
     @Arg("id", () => ID) id: number,
@@ -71,7 +71,7 @@ export class AdResolver {
     return updatedAd;
   }
 
-  // Mutation to delete an ad by ID
+  @Authorized()
   @Mutation(() => Boolean)
   public async deleteAd(@Arg("id", () => ID) id: string): Promise<boolean> {
     const numericId = Number(id);
@@ -89,7 +89,7 @@ export class AdResolver {
     return true;
   }
 
-  // Mutation to delete all ads
+  @Authorized(['SUPER_ADMIN'])
   @Mutation(() => Boolean)
   public async deleteAllAds(): Promise<boolean> {
     await this.adsService.deleteAll();

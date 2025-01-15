@@ -7,7 +7,6 @@ export const GET_AD = graphql(`
       title
       description
       price
-      owner
       picture
       location
       category {
@@ -20,7 +19,7 @@ export const GET_AD = graphql(`
       }
     }
   }
-`)
+`);
 
 export const GET_ALL_CATEGORIES = graphql(`
   query Categories {
@@ -32,7 +31,7 @@ export const GET_ALL_CATEGORIES = graphql(`
 `);
 
 export const GET_ALL_ADS = graphql(`
-  query {
+  query GetAllAds {
     ads {
       id
       picture
@@ -74,33 +73,31 @@ export const DELETE_AD = graphql(`
 `);
 
 export const UPDATE_AD = graphql(`
-mutation updateAd($adData: AdInput!, $updateAdId: ID!) {
-  updateAd(adData: $adData, id: $updateAdId) {
-    title
-    price
-    owner
-    picture
-    location
-    category {
-      id
+  mutation updateAd($adData: AdInput!, $updateAdId: ID!) {
+    updateAd(adData: $adData, id: $updateAdId) {
+      title
+      price
+      picture
+      location
+      category {
+        id
+      }
     }
   }
-}
 `);
 
 export const CREATE_AD = graphql(`
-mutation createAd($adData: AdInput!) {
-  createAd(adData: $adData) {
-    title
-    owner
-    price
-    picture
-    location
-    category {
-      id
+  mutation createAd($adData: AdInput!) {
+    createAd(adData: $adData) {
+      title
+      price
+      picture
+      location
+      category {
+        id
+      }
     }
   }
-}
 `);
 
 export const GET_TAGS = graphql(`
@@ -108,6 +105,36 @@ export const GET_TAGS = graphql(`
     tags {
       name
       id
+    }
+  }
+`);
+
+export const GET_USER_BY_EMAIL = graphql(`
+  query userByEmail($email: String!) {
+    userByEmail(email: $email) {
+      id
+      email
+    }
+  }
+`);
+
+export const CREATE_USER = graphql(`
+  mutation CreateUser($userData: UserCreateInput!) {
+    createUser(userData: $userData) {
+      id
+      email
+    }
+  }
+`);
+
+export const SIGN_IN = graphql(`
+  mutation SignIn($email: String!, $password: String!) {
+    signIn(email: $email, password: $password) {
+      token
+      user {
+        id
+        email
+      }
     }
   }
 `);

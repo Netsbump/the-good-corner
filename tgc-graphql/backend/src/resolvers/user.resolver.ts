@@ -6,6 +6,7 @@ import { UserCreateInput } from '../inputs/user.input'
 import { AuthResponse } from '../types/auth.type'
 import { Context } from '../types/context.type'
 import { AuthContext } from '../types/auth-checker'
+import jwt from 'jsonwebtoken'
 
 @Service()
 @Resolver(() => User)
@@ -33,7 +34,12 @@ export class UserResolver {
     return user
   }
 
-  @Mutation(() => AuthResponse)
+  @Query(() => User, { nullable: true })
+  public async userByEmail(@Arg("email") email: string): Promise<User | null> {
+    return await this.userService.getByEmail(email)
+  }
+
+  @Mutation(() => User)
   public async createUser(
     @Arg("userData") userData: UserCreateInput,
   ): Promise<User> {

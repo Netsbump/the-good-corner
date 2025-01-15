@@ -28,6 +28,11 @@ export class UserService {
     return user || null
   }
 
+  public async getByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } })
+    return user || null
+  }
+
   public async create(userData: UserCreateInput): Promise<User> {
     try {
       // Vérifier si l'email existe déjà
@@ -69,6 +74,8 @@ export class UserService {
   public async signIn(email: string, password: string, context: Context): Promise<AuthResponse> {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
+      console.log(email)
+      console.log(user)
       if (!user) {
         throw new Error('User not found');
       }
