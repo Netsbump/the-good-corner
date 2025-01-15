@@ -28,7 +28,7 @@ export class UserService {
     return user || null
   }
 
-  public async create(userData: UserCreateInput, context: Context): Promise<AuthResponse> {
+  public async create(userData: UserCreateInput): Promise<User> {
     try {
       // Vérifier si l'email existe déjà
       const existingUser = await this.userRepository.findOne({
@@ -50,33 +50,69 @@ export class UserService {
       // Créer le nouvel utilisateur
       const newUser = this.userRepository.create({
         email: userData.email,
-        hashedPassword
+        hashedPassword,
+        isVerified: false // Ajouter un champ pour la vérification
       });
 
       await this.userRepository.save(newUser);
 
-      // Générer le token JWT
+      // TODO: Envoyer un email de vérification
+      // await this.emailService.sendVerificationEmail(newUser.email);
+
+      return newUser;
+    }
+    catch (error) {
+      throw new Error(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  public async signIn(email: string, password: string, context: Context): Promise<AuthResponse> {
+    try {
+      const user = await this.userRepository.findOne({ where: { email } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      //Todo: vérifier si le compte est vérifié
+
+      const validPassword = await argon2.verify(user.hashedPassword, password);
+      if (!validPassword) {
+        throw new Error('Password is incorrect');
+      }
+
       const token = jwt.sign(
-        { userId: newUser.id, email: newUser.email },
+        { userId: user.id, email: user.email },
         process.env.JWT_SECRET || 'your-secret-key',
         { expiresIn: '24h' }
       );
 
-      // Stocker le token dans un cookie
+      // Configurer le cookie
       context.cookies.set('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000
-      })
+        maxAge: 24 * 60 * 60 * 1000 // 24 heures
+      });
 
-      return {
-        user: newUser,
-        token
-      };
+      return { user, token };
+    } catch (error) {
+      throw new Error(`Failed to sign in: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    catch (error) {
-      throw new Error(`Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+
+  public async signOut(context: Context): Promise<boolean> {
+    try {
+      // Supprimer le cookie
+      context.cookies.set('token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 0 // Expire immédiatement
+      });
+
+      return true;
+    } catch (error) {
+      throw new Error(`Failed to sign out: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }

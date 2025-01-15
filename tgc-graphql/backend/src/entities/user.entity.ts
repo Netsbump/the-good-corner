@@ -20,5 +20,8 @@ export class User extends BaseEntity {
 
   @Column()
   hashedPassword!: string;
+
+  @Column({ default: false })
+  isVerified!: boolean;
 }
 

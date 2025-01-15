@@ -36,14 +36,28 @@ export class UserResolver {
   @Mutation(() => AuthResponse)
   public async createUser(
     @Arg("userData") userData: UserCreateInput,
-    @Ctx() context: Context
-  ): Promise<AuthResponse> {
-    return await this.userService.create(userData, context)
+  ): Promise<User> {
+    return await this.userService.create(userData)
   }
 
+  @Mutation(() => AuthResponse)
+  async signIn(
+    @Arg('email') email: string,
+    @Arg('password') password: string,
+    @Ctx() context: Context
+  ): Promise<AuthResponse> {
+    return await this.userService.signIn(email, password, context);
+  }
+
+  @Mutation(() => Boolean)
   @Authorized()
+  async signOut(@Ctx() context: Context): Promise<boolean> {
+    return await this.userService.signOut(context);
+  }
+
   @Query(() => User)
-  async me(@Ctx() { user }: AuthContext) {
+  @Authorized()
+  async me(@Ctx() { user }: AuthContext): Promise<User> {
     const currentUser = await this.userService.getById(user!.userId);
     if (!currentUser) {
       throw new Error('User not found');
