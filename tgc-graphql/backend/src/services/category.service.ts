@@ -1,7 +1,7 @@
-import type { CategoryDto } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Category } from '../entities/category.entity'
 import { Service, Inject } from 'typedi';
+import { CategoryCreateInput } from '../inputs/category.input';
 
 @Service()
 export class CategoryService {
@@ -24,7 +24,7 @@ export class CategoryService {
     return category || null
   }
 
-  public async create(category: Omit<CategoryDto, 'id'>): Promise<Category> {
+  public async create(category: CategoryCreateInput): Promise<Category> {
     try {
       const newCategory = this.categoriesRepository.create({
         ...category,
@@ -40,7 +40,7 @@ export class CategoryService {
     }
   }
 
-  public async update(id: number, category: Omit<CategoryDto, 'id'>): Promise<Category | null> {
+  public async update(id: number, category: CategoryCreateInput): Promise<Category | null> {
     try {
       const categoryToUpdate = await this.categoriesRepository.findOneBy({ id })
 

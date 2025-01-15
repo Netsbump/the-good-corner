@@ -60,3 +60,30 @@ export class AdCreateInput {
   @Field(() => [TagInput], { nullable: true })
   tags?: TagInput[];
 }
+
+@InputType()
+export class AdUpdateInput {
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  price?: number;
+
+  @Field({ nullable: true })
+  author?: string;
+
+  @Field({ nullable: true })
+  picture?: string;
+
+  @Field({ nullable: true })
+  location?: string;
+
+  @Field({ nullable: true })
+  category?: CategoryInput;
+
+  @Field(() => [TagInput], { nullable: true })
+  tags?: TagInput[];
+}

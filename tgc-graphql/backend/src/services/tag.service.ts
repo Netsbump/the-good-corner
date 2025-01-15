@@ -1,7 +1,7 @@
-import type { TagDto } from '@tgc/packages'
 import type { Repository } from 'typeorm'
 import type { Tag } from '../entities/tag.entity'
 import { Service, Inject } from 'typedi'
+import { TagCreateInput } from '../inputs/tag.input'
 
 @Service()
 export class TagService {
@@ -19,7 +19,7 @@ export class TagService {
     }
   }
 
-  public async create(tag: Omit<TagDto, 'id'>): Promise<Tag> {
+  public async create(tag: TagCreateInput): Promise<Tag> {
     try {
       const newTag = this.tagsRepository.create()
 
@@ -34,12 +34,12 @@ export class TagService {
     }
   }
 
-  public async update(id: number, tag: Omit<TagDto, 'id'>): Promise<Tag | null> {
+  public async update(id: number, tag: TagCreateInput): Promise<Tag> {
     try {
       const tagToUpdate = await this.tagsRepository.findOneBy({ id })
 
       if (!tagToUpdate) {
-        return null
+        throw new Error('Tag not found')
       }
       tagToUpdate.name = tag.name.toLowerCase()
 

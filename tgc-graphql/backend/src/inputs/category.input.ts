@@ -8,3 +8,15 @@ export class CategoryInput {
   @Field({nullable: true})
   name?: string;
 }
+
+@InputType()
+export class CategoryCreateInput {
+  @Field()
+  name!: string;
+}
+
+@InputType()
+export class CategoryUpdateInput {
+  @Field()
+  name!: string;
+}

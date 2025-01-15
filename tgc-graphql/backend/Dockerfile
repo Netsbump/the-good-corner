@@ -10,10 +10,6 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 
 # Copier les package.json
 COPY backend/package.json backend/
-COPY packages/package.json packages/
-
-# Copier le code source du package partagé
-COPY packages packages/
 
 # Installer les dépendances
 RUN pnpm install

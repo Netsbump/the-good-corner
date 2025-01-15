@@ -1,8 +1,7 @@
-import { Arg, ID, Mutation, Query, Resolver, Field, InputType, Float } from 'type-graphql';
+import { Arg, ID, Mutation, Query, Resolver } from 'type-graphql';
 import { Ad } from '../entities/ad.entity';
 import { AdService } from '../services/ad.service';
-import { AdPatchSchema, AdSchema, IdSchema, querySchema } from '@tgc/packages';
-import { AdInput } from '../inputs/ad.input';
+import { AdCreateInput, AdUpdateInput } from '../inputs/ad.input';
 import { Service } from 'typedi';
 import { Authorized } from 'type-graphql';
 import { Ctx } from 'type-graphql';
@@ -20,18 +19,9 @@ export class AdResolver {
     return this.adsService.getAll(categoryIds);
   }
 
-  // Query to get an ad by ID
   @Query(() => Ad, { nullable: true })
-  public async ad(@Arg("id", () => ID) id: string): Promise<Ad | null> {
-    
-    const numericId = Number(id);
-    const parseAdId = IdSchema.safeParse(numericId);
-
-    if (!parseAdId.success) {
-      throw new Error('Invalid ID format');
-    }
-
-    const ad = await this.adsService.getById(parseAdId.data);
+  public async ad(@Arg("id", () => ID) id: number): Promise<Ad> {
+    const ad = await this.adsService.getById(id);
     
     if (!ad) {
       throw new Error('Ad not found');
@@ -40,30 +30,22 @@ export class AdResolver {
     return ad;
   }
 
-  // Mutation to create a new ad
   @Authorized()
   @Mutation(() => Ad)
   async createAd(
-    @Arg("adData") adData: AdInput,
+    @Arg("adData") adToCreate: AdCreateInput,
     @Ctx() { user }: AuthContext
   ): Promise<Ad> {
-    return this.adsService.create(adData, user!.userId);
+    return this.adsService.create(adToCreate, user!.userId);
   }
 
   @Authorized()
   @Mutation(() => Ad, { nullable: true })
   public async updateAd(
     @Arg("id", () => ID) id: number,
-    @Arg("adData", () => AdInput) adData: AdInput
-  ): Promise<Ad | null> {
-
-    const numericId = Number(id);
-    const parseUpdateAdId = IdSchema.safeParse(numericId);
-    if (!parseUpdateAdId.success) {
-      throw new Error('Invalid ID format');
-    }
-
-    const updatedAd = await this.adsService.update(parseUpdateAdId.data, adData);
+    @Arg("adData", () => AdUpdateInput) adToUpdate: AdUpdateInput
+  ): Promise<Ad> {
+    const updatedAd = await this.adsService.update(id, adToUpdate);
     if (!updatedAd) {
       throw new Error('Ad not found');
     }
@@ -73,15 +55,8 @@ export class AdResolver {
 
   @Authorized()
   @Mutation(() => Boolean)
-  public async deleteAd(@Arg("id", () => ID) id: string): Promise<boolean> {
-    const numericId = Number(id);
-    const parseAdId = IdSchema.safeParse(numericId);
-
-    if (!parseAdId.success) {
-      throw new Error('Invalid ID format');
-    }
-
-    const deletedAd = await this.adsService.deleteById(parseAdId.data);
+  public async deleteAd(@Arg("id", () => ID) id: number): Promise<boolean> {
+    const deletedAd = await this.adsService.deleteById(id);
     if (!deletedAd) {
       throw new Error('Ad not found');
     }

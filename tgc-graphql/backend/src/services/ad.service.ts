@@ -4,7 +4,7 @@ import type { Category } from '../entities/category.entity'
 import type { Tag } from '../entities/tag.entity'
 import { In } from 'typeorm'
 import { Service, Inject } from 'typedi'
-import { AdCreateInput, AdInput } from '../inputs/ad.input'
+import { AdCreateInput, AdUpdateInput } from '../inputs/ad.input'
 import { User } from '../entities/user.entity'
 
 @Service()
@@ -85,22 +85,20 @@ export class AdService {
     }
   }
 
-  public async update(id: number, ad: AdInput): Promise<Ad | null> {
+  public async update(id: number, adToUpdate: AdUpdateInput): Promise<Ad> {
     try {
       const updateAd = await this.adsRepository.findOneBy({ id })
 
       if (!updateAd) {
-        return null
+        throw new Error('Ad not found')
       }
 
-      updateAd.title = ad.title
-      if (ad.description) {
-        updateAd.description = ad.description
-      }
-      updateAd.price = ad.price
-      updateAd.picture = ad.picture
-      updateAd.location = ad.location
-      const categoryId = Number(ad.category.id)
+      updateAd.title = adToUpdate.title || updateAd.title
+      updateAd.description = adToUpdate.description || updateAd.description
+      updateAd.price = adToUpdate.price || updateAd.price
+      updateAd.picture = adToUpdate.picture || updateAd.picture
+      updateAd.location = adToUpdate.location || updateAd.location
+      const categoryId = Number(adToUpdate.category?.id)
       updateAd.category = await this.categoryRepository.findOneByOrFail({ id: categoryId })
 
       await this.adsRepository.save(updateAd)

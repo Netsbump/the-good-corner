@@ -8,3 +8,15 @@ export class TagInput {
   @Field()
   name!: string;
 }
+
+@InputType()
+export class TagCreateInput {
+  @Field()
+  name!: string;
+}
+
+@InputType()
+export class TagUpdateInput {
+  @Field()
+  name!: string;
+}

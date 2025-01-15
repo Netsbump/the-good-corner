@@ -1,4 +1,4 @@
-import { Arg, ID, Mutation, Query, Resolver, Ctx, Authorized } from 'type-graphql'
+import { Arg, Mutation, Query, Resolver, Ctx, Authorized, ID } from 'type-graphql'
 import { Service } from 'typedi'
 import { User } from '../entities/user.entity'
 import { UserService } from '../services/user.service'
@@ -6,7 +6,6 @@ import { UserCreateInput } from '../inputs/user.input'
 import { AuthResponse } from '../types/auth.type'
 import { Context } from '../types/context.type'
 import { AuthContext } from '../types/auth-checker'
-import jwt from 'jsonwebtoken'
 
 @Service()
 @Resolver(() => User)
@@ -26,7 +25,7 @@ export class UserResolver {
 
   @Authorized(["ADMIN"])
   @Query(() => User)
-  public async user(@Arg("id") id: number): Promise<User> {
+  public async user(@Arg("id", () => ID) id: number): Promise<User> {
     const user = await this.userService.getById(id)
     if (!user) {
       throw new Error('User not found');

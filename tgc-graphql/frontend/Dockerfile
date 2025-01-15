@@ -8,12 +8,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # Copie des fichiers globaux de la racine
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 
-# Copier le package.json du frontend ET du package partagé
+# Copier le package.json du frontend
 COPY frontend/package.json frontend/
-COPY packages/package.json packages/
-
-# Copier le code source du package partagé
-COPY packages packages/
 
 # Installer les dépendances
 RUN pnpm install

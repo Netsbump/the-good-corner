@@ -1,3 +1,0 @@
-UPDATE Ads SET price = 0 WHERE createdAt = '2024-09-25 11:38:15'
-
-SELECT * FROM Ads

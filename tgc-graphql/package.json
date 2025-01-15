@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "frontend",
-    "backend",
-    "packages/*"
+    "backend"
   ],
   "main": "index.js",
   "scripts": {
