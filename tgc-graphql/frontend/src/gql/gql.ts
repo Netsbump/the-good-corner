@@ -19,12 +19,14 @@ const documents = {
     "\n  query GetAllAds {\n    ads {\n      id\n      picture\n      price\n      title\n      tags {\n        id\n        name\n      }\n      category {\n        name\n      }\n    }\n  }\n": types.GetAllAdsDocument,
     "\n  query Ads($categoryIds: [ID!]) {\n    ads(categoryIds: $categoryIds) {\n      id\n      picture\n      price\n      title\n      tags {\n        id\n        name\n      }\n      category {\n        name\n      }\n    }\n  }\n": types.AdsDocument,
     "\n  mutation deleteAd($id: ID!) {\n    deleteAd(id: $id)\n  }\n": types.DeleteAdDocument,
-    "\n  mutation updateAd($adData: AdInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n": types.UpdateAdDocument,
-    "\n  mutation createAd($adData: AdInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n": types.CreateAdDocument,
+    "\n  mutation updateAd($adData: AdUpdateInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n": types.UpdateAdDocument,
+    "\n  mutation createAd($adData: AdCreateInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n": types.CreateAdDocument,
     "\n  query Tags {\n    tags {\n      name\n      id\n    }\n  }\n": types.TagsDocument,
     "\n  query userByEmail($email: String!) {\n    userByEmail(email: $email) {\n      id\n      email\n    }\n  }\n": types.UserByEmailDocument,
     "\n  mutation CreateUser($userData: UserCreateInput!) {\n    createUser(userData: $userData) {\n      id\n      email\n    }\n  }\n": types.CreateUserDocument,
     "\n  mutation SignIn($email: String!, $password: String!) {\n    signIn(email: $email, password: $password) {\n      token\n      user {\n        id\n        email\n      }\n    }\n  }\n": types.SignInDocument,
+    "\n  mutation SignOut {\n    signOut\n  }\n": types.SignOutDocument,
+    "\n  query Me {\n    me {\n      id\n      email\n    }\n  }\n": types.MeDocument,
 };
 
 /**
@@ -64,11 +66,11 @@ export function graphql(source: "\n  mutation deleteAd($id: ID!) {\n    deleteAd
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation updateAd($adData: AdInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation updateAd($adData: AdInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation updateAd($adData: AdUpdateInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation updateAd($adData: AdUpdateInput!, $updateAdId: ID!) {\n    updateAd(adData: $adData, id: $updateAdId) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation createAd($adData: AdInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation createAd($adData: AdInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation createAd($adData: AdCreateInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation createAd($adData: AdCreateInput!) {\n    createAd(adData: $adData) {\n      title\n      price\n      picture\n      location\n      category {\n        id\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -85,6 +87,14 @@ export function graphql(source: "\n  mutation CreateUser($userData: UserCreateIn
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation SignIn($email: String!, $password: String!) {\n    signIn(email: $email, password: $password) {\n      token\n      user {\n        id\n        email\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation SignIn($email: String!, $password: String!) {\n    signIn(email: $email, password: $password) {\n      token\n      user {\n        id\n        email\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation SignOut {\n    signOut\n  }\n"): (typeof documents)["\n  mutation SignOut {\n    signOut\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Me {\n    me {\n      id\n      email\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      id\n      email\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

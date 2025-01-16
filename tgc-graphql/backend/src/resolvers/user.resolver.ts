@@ -60,13 +60,16 @@ export class UserResolver {
     return await this.userService.signOut(context);
   }
 
-  @Query(() => User)
+  @Query(() => User, { nullable: true })
   @Authorized()
-  async me(@Ctx() { user }: AuthContext): Promise<User> {
-    const currentUser = await this.userService.getById(user!.userId);
+  async me(@Ctx() { user }: AuthContext): Promise<User | null> {
+    if (!user) return null;
+
+    const currentUser = await this.userService.getById(user.userId);
     if (!currentUser) {
-      throw new Error('User not found');
+      return null;
     }
+
     return currentUser;
   }
 }

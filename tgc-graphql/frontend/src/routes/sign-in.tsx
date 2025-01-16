@@ -21,6 +21,7 @@ import { z } from 'zod'
 import { useMutation } from '@apollo/client'
 import { SIGN_IN } from '@/api/api'
 import { useToast } from '@/hooks/use-toast'
+import { useAuth } from '@/contexts/AuthContext'
 
 const formSchema = z.object({
   email: z.string().email('Email invalide'),
@@ -41,9 +42,14 @@ export const Route = createFileRoute('/sign-in')({
 function SignInPage() {
   const { email } = useSearch({ from: '/sign-in' })
   const navigate = useNavigate()
+  const { refetch } = useAuth()
   const { toast } = useToast()
 
-  const [signIn, { loading }] = useMutation(SIGN_IN)
+  const [signIn, { loading }] = useMutation(SIGN_IN, {
+    onCompleted: async () => {
+      await refetch() 
+    }
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

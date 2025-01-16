@@ -16,12 +16,12 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SignInImport } from './routes/sign-in'
 import { Route as RegisterInImport } from './routes/register-in'
 import { Route as AuthImport } from './routes/auth'
+import { Route as AccountImport } from './routes/account'
 import { Route as authImport } from './routes/__auth'
 import { Route as MySearchesIndexImport } from './routes/my-searches.index'
 import { Route as MessagesIndexImport } from './routes/messages.index'
 import { Route as FavoritesIndexImport } from './routes/favorites.index'
 import { Route as AdsIndexImport } from './routes/ads.index'
-import { Route as AccountIndexImport } from './routes/account.index'
 import { Route as AdsAdIdImport } from './routes/ads.$adId'
 import { Route as AdNewImport } from './routes/ad.new'
 
@@ -49,6 +49,11 @@ const RegisterInRoute = RegisterInImport.update({
 
 const AuthRoute = AuthImport.update({
   path: '/auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AccountRoute = AccountImport.update({
+  path: '/account',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -82,11 +87,6 @@ const AdsIndexRoute = AdsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AccountIndexRoute = AccountIndexImport.update({
-  path: '/account/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AdsAdIdRoute = AdsAdIdImport.update({
   path: '/ads/$adId',
   getParentRoute: () => rootRoute,
@@ -113,6 +113,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof authImport
+      parentRoute: typeof rootRoute
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountImport
       parentRoute: typeof rootRoute
     }
     '/auth': {
@@ -157,13 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdsAdIdImport
       parentRoute: typeof rootRoute
     }
-    '/account/': {
-      id: '/account/'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AccountIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/ads/': {
       id: '/ads/'
       path: '/ads'
@@ -200,13 +200,13 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '': typeof authRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/register-in': typeof RegisterInRoute
   '/sign-in': typeof SignInRoute
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
-  '/account': typeof AccountIndexRoute
   '/ads': typeof AdsIndexRoute
   '/favorites': typeof FavoritesIndexRoute
   '/messages': typeof MessagesIndexRoute
@@ -216,13 +216,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '': typeof authRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/register-in': typeof RegisterInRoute
   '/sign-in': typeof SignInRoute
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
-  '/account': typeof AccountIndexRoute
   '/ads': typeof AdsIndexRoute
   '/favorites': typeof FavoritesIndexRoute
   '/messages': typeof MessagesIndexRoute
@@ -233,13 +233,13 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/__auth': typeof authRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/register-in': typeof RegisterInRoute
   '/sign-in': typeof SignInRoute
   '/about': typeof AboutLazyRoute
   '/ad/new': typeof AdNewRoute
   '/ads/$adId': typeof AdsAdIdRoute
-  '/account/': typeof AccountIndexRoute
   '/ads/': typeof AdsIndexRoute
   '/favorites/': typeof FavoritesIndexRoute
   '/messages/': typeof MessagesIndexRoute
@@ -251,13 +251,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/account'
     | '/auth'
     | '/register-in'
     | '/sign-in'
     | '/about'
     | '/ad/new'
     | '/ads/$adId'
-    | '/account'
     | '/ads'
     | '/favorites'
     | '/messages'
@@ -266,13 +266,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
+    | '/account'
     | '/auth'
     | '/register-in'
     | '/sign-in'
     | '/about'
     | '/ad/new'
     | '/ads/$adId'
-    | '/account'
     | '/ads'
     | '/favorites'
     | '/messages'
@@ -281,13 +281,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/__auth'
+    | '/account'
     | '/auth'
     | '/register-in'
     | '/sign-in'
     | '/about'
     | '/ad/new'
     | '/ads/$adId'
-    | '/account/'
     | '/ads/'
     | '/favorites/'
     | '/messages/'
@@ -298,13 +298,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   authRoute: typeof authRoute
+  AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRoute
   RegisterInRoute: typeof RegisterInRoute
   SignInRoute: typeof SignInRoute
   AboutLazyRoute: typeof AboutLazyRoute
   AdNewRoute: typeof AdNewRoute
   AdsAdIdRoute: typeof AdsAdIdRoute
-  AccountIndexRoute: typeof AccountIndexRoute
   AdsIndexRoute: typeof AdsIndexRoute
   FavoritesIndexRoute: typeof FavoritesIndexRoute
   MessagesIndexRoute: typeof MessagesIndexRoute
@@ -314,13 +314,13 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   authRoute: authRoute,
+  AccountRoute: AccountRoute,
   AuthRoute: AuthRoute,
   RegisterInRoute: RegisterInRoute,
   SignInRoute: SignInRoute,
   AboutLazyRoute: AboutLazyRoute,
   AdNewRoute: AdNewRoute,
   AdsAdIdRoute: AdsAdIdRoute,
-  AccountIndexRoute: AccountIndexRoute,
   AdsIndexRoute: AdsIndexRoute,
   FavoritesIndexRoute: FavoritesIndexRoute,
   MessagesIndexRoute: MessagesIndexRoute,
@@ -341,13 +341,13 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/__auth",
+        "/account",
         "/auth",
         "/register-in",
         "/sign-in",
         "/about",
         "/ad/new",
         "/ads/$adId",
-        "/account/",
         "/ads/",
         "/favorites/",
         "/messages/",
@@ -359,6 +359,9 @@ export const routeTree = rootRoute
     },
     "/__auth": {
       "filePath": "__auth.tsx"
+    },
+    "/account": {
+      "filePath": "account.tsx"
     },
     "/auth": {
       "filePath": "auth.tsx"
@@ -377,9 +380,6 @@ export const routeTree = rootRoute
     },
     "/ads/$adId": {
       "filePath": "ads.$adId.tsx"
-    },
-    "/account/": {
-      "filePath": "account.index.tsx"
     },
     "/ads/": {
       "filePath": "ads.index.tsx"

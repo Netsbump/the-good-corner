@@ -73,7 +73,7 @@ export const DELETE_AD = graphql(`
 `);
 
 export const UPDATE_AD = graphql(`
-  mutation updateAd($adData: AdInput!, $updateAdId: ID!) {
+  mutation updateAd($adData: AdUpdateInput!, $updateAdId: ID!) {
     updateAd(adData: $adData, id: $updateAdId) {
       title
       price
@@ -87,7 +87,7 @@ export const UPDATE_AD = graphql(`
 `);
 
 export const CREATE_AD = graphql(`
-  mutation createAd($adData: AdInput!) {
+  mutation createAd($adData: AdCreateInput!) {
     createAd(adData: $adData) {
       title
       price
@@ -135,6 +135,21 @@ export const SIGN_IN = graphql(`
         id
         email
       }
+    }
+  }
+`);
+
+export const SIGN_OUT = graphql(`
+  mutation SignOut {
+    signOut
+  }
+`);
+
+export const GET_CURRENT_USER = graphql(`
+  query Me {
+    me {
+      id
+      email
     }
   }
 `);

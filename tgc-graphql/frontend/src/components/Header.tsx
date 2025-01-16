@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { Account } from './Account'
 import { Favorites } from './Favorites'
 import { HistorySearch } from './HistorySearch'
 import { Messages } from './Messages'
 import { Navbar } from './Navbar'
 import { PublishButton } from './PublishButton'
 import { Searchbar } from './Searchbar'
+import { Profile } from './Profile'
 
 export function Header() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
@@ -86,7 +86,7 @@ export function Header() {
             <HistorySearch />
             <Favorites />
             <Messages />
-            <Account />
+            <Profile />
           </div>
 
         </div>

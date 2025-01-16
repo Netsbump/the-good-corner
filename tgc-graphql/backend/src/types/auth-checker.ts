@@ -7,5 +7,5 @@ export interface AuthenticatedUser {
 
 // Étendre le Context pour inclure l'utilisateur
 export interface AuthContext extends Context {
-  user?: AuthenticatedUser;
+  user?: AuthenticatedUser | null;
 } 

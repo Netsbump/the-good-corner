@@ -2,6 +2,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { AuthProvider } from './contexts/AuthContext'
 import './index.css'
 
 // Initialize ApolloClient 
@@ -31,7 +32,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ApolloProvider client={client}>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </ApolloProvider>
     </StrictMode>,
   )

@@ -8,22 +8,25 @@ export const authChecker: AuthChecker<AuthContext> = async (
 ) => {
   try {
     const token = context.cookies.get('token');
-    if (!token) return false;
+    if (!token) {
+      context.user = null;
+      return true;
+    }
 
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || 'your-secret-key'
     ) as AuthenticatedUser;
 
-    // Ajouter l'utilisateur au contexte
     context.user = decoded;
 
-    // Vérifier les rôles si nécessaire
-    if (roles.length === 0) return true;
-    // TODO: Implémenter la vérification des rôles
+    if (roles.length > 0 && !decoded) {
+      return false;
+    }
 
     return true;
   } catch {
-    return false;
+    context.user = null;
+    return true;
   }
 }; 
